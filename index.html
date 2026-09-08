@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Presensi Siswa</title>
+  
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: #334155;
+      padding-bottom: 3rem;
+    }
+
+    /* Header Styling */
+    .app-header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      margin-bottom: 2rem;
+    }
+
+    /* Card & Container */
+    .main-card {
+      background: #ffffff;
+      border: none;
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    /* Custom Navigation Tabs */
+    .nav-pills .nav-link {
+      color: #64748b;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-pills .nav-link.active {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Radio Button Presensi Modern */
+    .status-group {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+    }
+
+    .btn-check + .btn-status {
+      border: none;
+      background: transparent;
+      color: #64748b;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-check:checked + .btn-status.status-h { background: #10b981; color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+    .btn-check:checked + .btn-status.status-s { background: #f59e0b; color: white; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+    .btn-check:checked + .btn-status.status-i { background: #06b6d4; color: white; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); }
+    .btn-check:checked + .btn-status.status-a { background: #ef4444; color: white; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
+    .btn-check:checked + .btn-status.status-d { background: #6b7280; color: white; box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3); }
+
+    /* Custom Button Utama */
+    .btn-primary-custom {
+      background-color: var(--primary-color);
+      border: none;
+      border-radius: 12px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary-custom:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    /* Style Tabel Responsif */
+    .table {
+      vertical-align: middle;
+      margin-bottom: 0;
+    }
+
+    .table thead th {
+      background-color: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid #e2e8f0;
+      padding: 1rem;
+    }
+
+    /* Badge Persentase */
+    .badge-persen {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .persen-tinggi { background-color: #dcfce7; color: #15803d; }
+    .persen-rendah { background-color: #fee2e2; color: #b91c1c; }
+
+    /* Touch Friendly pada Perangkat Mobile */
+    @media (max-width: 576px) {
+      .btn-status {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+      }
+      .nav-pills .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header / Navbar -->
+ <header class="app-header py-3">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+      <!-- Container Logo -->
+      <div class="d-flex align-items-center justify-content-center flex-shrink-0">
+        <img src="https://lh3.googleusercontent.com/d/1erlU3Wwr8NuIusv6FXvG3qahEv7D1eQL" 
+             alt="Logo SMAN Taruna Nala" 
+             class="img-fluid object-fit-contain" 
+             style="width: 48px; height: 48px; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.15));">
+      </div>
+      <!-- Judul Aplikasi -->
+      <h1 class="h5 h4-md mb-0 fw-bold text-dark lh-sm">
+        Presensi Digital Bimbingan TKA SN 10
+      </h1>
+    </div>
+  </div>
+  <div class="container d-flex align-items-center justify-content-between">
+  Mohon mengisi presensi kehadiran siswa pada saat bimbingan TKA
+  </div>
+</header>
+
+  <main class="container">
+    <!-- Alert Notification -->
+    <div id="alertBox" class="alert alert-dismissible fade show d-none border-0 shadow-sm rounded-3 mb-4" role="alert"></div>
+
+    <!-- Main Card Container -->
+    <div class="main-card p-4">
+      
+      <!-- Tab Navigation -->
+      <ul class="nav nav-pills mb-4 gap-2 border-bottom pb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="input-tab" data-bs-toggle="pill" data-bs-target="#input" type="button" role="tab">
+            <i class="fa-solid fa-pen-to-square me-2"></i>Isi Presensi
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="rekap-tab" data-bs-toggle="pill" data-bs-target="#rekap" type="button" role="tab">
+            <i class="fa-solid fa-chart-column me-2"></i>Lihat Rekap
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        
+        <!-- TAB 1: FORM INPUT PRESENSI -->
+        <div class="tab-pane fade show active" id="input" role="tabpanel">
+          <form id="presensiForm">
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="date" class="form-control rounded-3" id="tanggal" required>
+                  <label for="tanggal"><i class="fa-regular fa-calendar me-2"></i>Tanggal Presensi</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select rounded-3" id="kelasSelect" onchange="loadStudents()" required>
+                    <option value="" disabled selected>-- Pilih Kelas --</option>
+                    
+                    <optgroup label="Bahasa">
+                      <option value="Bahasa Jerman">Bahasa Jerman</option>
+                    </optgroup>
+                  
+                    <optgroup label="Sains (IPA)">
+                      <option value="Biologi A">Biologi A</option>
+                      <option value="Biologi B">Biologi B</option>
+                      <option value="Biologi C">Biologi C</option>
+                      <option value="Biologi D">Biologi D</option>
+                      <option value="Fisika A">Fisika A</option>
+                      <option value="Fisika B">Fisika B</option>
+                      <option value="Fisika C">Fisika C</option>
+                      <option value="Kimia A">Kimia A</option>
+                      <option value="Kimia B">Kimia B</option>
+                      <option value="Kimia C">Kimia C</option>
+                    </optgroup>
+                  
+                    <optgroup label="Matematika TL">
+                      <option value="Matematika Tingkat Lanjut A">Matematika Tingkat Lanjut A</option>
+                      <option value="Matematika Tingkat Lanjut B">Matematika Tingkat Lanjut B</option>
+                    </optgroup>
+                  
+                    <optgroup label="Ilmu Pengetahuan Sosial (IPS)">
+                      <option value="Ekonomi">Ekonomi</option>
+                      <option value="Geografi">Geografi</option>
+                      <option value="Sejarah A">Sejarah A</option>
+                      <option value="Sejarah B">Sejarah B</option>
+                      <option value="Sosiologi">Sosiologi</option>
+                    </optgroup>
+                  
+                    <optgroup label="Pendidikan Kewarganegaraan">
+                      <option value="Pendidikan Pancasila dan Kewarganegaraan A">Pendidikan Pancasila dan Kewarganegaraan A</option>
+                      <option value="Pendidikan Pancasila dan Kewarganegaraan B">Pendidikan Pancasila dan Kewarganegaraan B</option>
+                    </optgroup>
+                  </select>
+                  <label for="kelasSelect"><i class="fa-solid fa-chalkboard-user me-2"></i>Pilih Kelas</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loading Spinner Input -->
+            <div id="loading" class="text-center d-none py-5">
+              <div class="spinner-border text-primary mb-2" role="status"></div>
+              <p class="text-muted small fw-semibold">Memuat daftar siswa...</p>
+            </div>
+
+            <!-- Table Siswa -->
+            <div id="studentContainer" class="d-none">
+              <div class="table-responsive rounded-3 border mb-3">
+                <table class="table table-hover align-middle text-center">
+                  <thead>
+                    <tr>
+                      <th style="width: 8%;">No</th>
+                      <th style="width: 42%;" class="text-start">Nama Siswa</th>
+                      <th style="width: 50%;">Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentList"></tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-primary-custom w-100 fs-6" onclick="submitData()" id="btnSubmit">
+                <i class="fa-solid fa-paper-plane me-2"></i>Kirim Data Presensi
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- TAB 2: REKAPITULASI -->
+        <div class="tab-pane fade" id="rekap" role="tabpanel">
+          <div class="row g-3 mb-4">
+            <div class="col-md-8">
+              <div class="form-floating">
+                <select class="form-select rounded-3" id="rekapKelas">
+                  <option value="" disabled selected>-- Pilih Kelas --</option>
+                  <option value="X-4">X-4</option>
+                  <option value="X-5">X-5</option>
+                  <option value="X-6">X-6</option>
+                  <option value="XII-1">XII-1</option>
+                  <option value="XII-2">XII-2</option>
+                  <option value="XII-3">XII-3</option>
+                  <option value="XII-4">XII-4</option>
+                </select>
+                <label for="rekapKelas"><i class="fa-solid fa-layer-group me-2"></i>Kelas untuk Rekap</label>
+              </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              <button class="btn btn-primary-custom w-100 h-100" onclick="loadRekap()">
+                <i class="fa-solid fa-magnifying-glass me-2"></i>Tampilkan Rekap
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Spinner Rekap -->
+          <div id="rekapLoading" class="text-center d-none py-5">
+            <div class="spinner-border text-primary mb-2" role="status"></div>
+            <p class="text-muted small fw-semibold">Memuat rekapitulasi data...</p>
+          </div>
+
+          <!-- Table Rekap -->
+          <div class="table-responsive rounded-3 border">
+            <table class="table table-bordered table-striped text-center align-middle" id="rekapTable">
+              <thead id="rekapHead"></thead>
+              <tbody id="rekapBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // MASUKKAN URL DEPLOYMENT GOOGLE APPS SCRIPT MILIKMU DI SINI
+    const API_URL = "https://script.google.com/macros/s/AKfycbzaTpiORmaR0T8ug-ZAD6GqJzYhycqSnEZrQT-Kk5HqMfCEswUdixo_Q8zt_876RfA/exec";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('tanggal').value = today;
+    });
+
+    function showAlert(message, type = 'success') {
+      const alertBox = document.getElementById('alertBox');
+      const icon = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
+      alertBox.className = `alert alert-${type} alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4`;
+      alertBox.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="fa-solid ${icon} fs-5 me-2"></i>
+          <div>${message}</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      alertBox.classList.remove('d-none');
+    }
+
+    function loadStudents() {
+      const kelas = document.getElementById('kelasSelect').value;
+      if (!kelas) return;
+      
+      document.getElementById('studentContainer').classList.add('d-none');
+      document.getElementById('loading').classList.remove('d-none');
+      
+      fetch(`${API_URL}?action=getStudents&kelas=${encodeURIComponent(kelas)}`)
+        .then(res => res.json())
+        .then(data => renderStudents(data))
+        .catch(err => {
+          showAlert("Gagal memuat daftar siswa: " + err.message, "danger");
+          document.getElementById('loading').classList.add('d-none');
+        });
+    }
+
+    function renderStudents(students) {
+      document.getElementById('loading').classList.add('d-none');
+      const tbody = document.getElementById('studentList');
+      tbody.innerHTML = '';
+      
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-muted py-4">Data siswa tidak ditemukan untuk kelas ini.</td></tr>';
+      } else {
+        students.forEach((nama, index) => {
+          let tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="fw-semibold text-muted">${index + 1}</td>
+            <td class="text-start fw-bold text-dark">${escapeHtml(nama)}</td>
+            <td>
+              <div class="status-group">
+                <input type="radio" class="btn-check" name="status_${index}" id="H_${index}" value="Hadir" checked>
+                <label class="btn-status status-h" for="H_${index}">H</label>
+
+                <input type="radio" class="btn-check" name="status_${index}" id="S_${index}" value="Sakit">
+                <label class="btn-status status-s" for="S_${index}">S</label>
+
+                <input type="radio" class="btn-check" name="status_${index}" id="I_${index}" value="Ijin">
+                <label class="btn-status status-i" for="I_${index}">I</label>
+
+                <input type="radio" class="btn-check" name="status_${index}" id="A_${index}" value="Alpha">
+                <label class="btn-status status-a" for="A_${index}">A</label>
+
+                <input type="radio" class="btn-check" name="status_${index}" id="D_${index}" value="Dispen">
+                <label class="btn-status status-d" for="D_${index}">D</label>
+              </div>
+              <input type="hidden" class="student-name" value="${escapeHtml(nama)}">
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+      document.getElementById('studentContainer').classList.remove('d-none');
+    }
+
+    function submitData() {
+      const tanggal = document.getElementById('tanggal').value;
+      const kelas = document.getElementById('kelasSelect').value;
+      const btnSubmit = document.getElementById('btnSubmit');
+      
+      if(!tanggal || !kelas) {
+        showAlert("Pastikan tanggal dan kelas sudah dipilih!", "warning");
+        return;
+      }
+
+      const rows = document.getElementById('studentList').getElementsByTagName('tr');
+      let presensiData = [];
+      
+      for(let i = 0; i < rows.length; i++) {
+        let nameInput = rows[i].querySelector('.student-name');
+        let statusInput = rows[i].querySelector(`input[name="status_${i}"]:checked`);
+        
+        if(nameInput && statusInput) {
+          presensiData.push({ nama: nameInput.value, status: statusInput.value });
+        }
+      }
+
+      if (presensiData.length === 0) {
+        showAlert("Tidak ada data siswa yang dikirim.", "warning");
+        return;
+      }
+
+      const payload = { tanggal: tanggal, kelas: kelas, presensi: presensiData };
+
+      btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Menyimpan...';
+      btnSubmit.disabled = true;
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(res => {
+        showAlert(res.message, "success");
+        btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Kirim Data Presensi';
+        btnSubmit.disabled = false;
+        document.getElementById('kelasSelect').value = '';
+        document.getElementById('studentContainer').classList.add('d-none');
+      })
+      .catch(err => {
+        showAlert("Gagal menyimpan data: " + err.message, "danger");
+        btnSubmit.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i>Kirim Data Presensi';
+        btnSubmit.disabled = false;
+      });
+    }
+
+    function loadRekap() {
+      const kelas = document.getElementById('rekapKelas').value;
+      if(!kelas) {
+        showAlert("Silakan pilih kelas terlebih dahulu.", "warning");
+        return;
+      }
+      
+      document.getElementById('rekapLoading').classList.remove('d-none');
+      document.getElementById('rekapHead').innerHTML = '';
+      document.getElementById('rekapBody').innerHTML = '';
+      
+      fetch(`${API_URL}?action=getRekap&kelas=${encodeURIComponent(kelas)}`)
+        .then(res => res.json())
+        .then(data => renderRekap(data))
+        .catch(err => {
+          showAlert("Gagal memuat rekap data: " + err.message, "danger");
+          document.getElementById('rekapLoading').classList.add('d-none');
+        });
+    }
+
+    function renderRekap(data) {
+      document.getElementById('rekapLoading').classList.add('d-none');
+      const head = document.getElementById('rekapHead');
+      const body = document.getElementById('rekapBody');
+      
+      if (!data.rows || data.rows.length === 0) {
+        head.innerHTML = '<tr><th class="text-muted py-4">Belum ada data presensi untuk kelas ini.</th></tr>';
+        return;
+      }
+
+      let columnsToKeep = [1];
+      for (let col = 2; col < data.headers.length; col++) {
+        let hasData = false;
+        for (let r = 0; r < data.rows.length; r++) {
+          if (data.rows[r][col] !== undefined && String(data.rows[r][col]).trim() !== '') {
+            hasData = true;
+            break;
+          }
+        }
+        if (hasData) columnsToKeep.push(col);
+      }
+
+      let headHtml = '<tr>';
+      columnsToKeep.forEach(colIndex => {
+        headHtml += `<th>${escapeHtml(data.headers[colIndex])}</th>`;
+      });
+      headHtml += '<th>Kehadiran (%)</th></tr>';
+      head.innerHTML = headHtml;
+
+      let bodyHtml = '';
+      data.rows.forEach(row => {
+        bodyHtml += '<tr>';
+        let hadirCount = 0;
+        let totalHari = 0;
+
+        columnsToKeep.forEach(colIndex => {
+          let val = String(row[colIndex] || '').trim();
+
+          if (colIndex === 1) { 
+            bodyHtml += `<td class="text-start fw-bold text-dark">${escapeHtml(val)}</td>`;
+          } else {
+            let statusStyle = '';
+            if (val === 'Hadir') { statusStyle = 'text-success fw-bold'; hadirCount++; }
+            else if (val === 'Sakit') statusStyle = 'text-warning fw-bold';
+            else if (val === 'Ijin') statusStyle = 'text-info fw-bold';
+            else if (val === 'Alpha') statusStyle = 'text-danger fw-bold';
+            else if (val === 'Dispen') statusStyle = 'text-secondary fw-bold';
+            
+            if (val !== '') totalHari++;
+            bodyHtml += `<td class="${statusStyle}">${val || '-'}</td>`;
+          }
+        });
+
+        let persentase = totalHari > 0 ? Math.round((hadirCount / totalHari) * 100) : 0;
+        let badgeClass = persentase >= 75 ? 'persen-tinggi' : 'persen-rendah';
+        
+        bodyHtml += `<td><span class="badge-persen ${badgeClass}">${persentase}%</span></td>`;
+        bodyHtml += '</tr>';
+      });
+      
+      body.innerHTML = bodyHtml;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
