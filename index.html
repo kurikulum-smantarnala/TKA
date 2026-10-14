@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Kuis</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { background-color: #f8fafc; color: #0f172a; user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+    @media print { body { display: none !important; } }
+
+    .hero-header { position: relative; width: 100%; min-height: 38vh; background: linear-gradient(135deg, #0284c7 0%, #1e40af 100%);
+      display: flex; justify-content: center; align-items: center; text-align: center; overflow: hidden; padding: 2.5rem 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+    .math-symbol { position: absolute; color: rgba(255,255,255,.15); font-size: 4rem; font-weight: 800; animation: float 6s ease-in-out infinite; pointer-events: none; }
+    .s1 { top: 15%; left: 8%; } .s2 { bottom: 15%; right: 10%; animation-delay: 2s; font-size: 5rem; }
+    .s3 { top: 20%; right: 12%; animation-delay: 4s; } .s4 { bottom: 10%; left: 12%; animation-delay: 1s; font-size: 5.5rem; }
+    @keyframes float { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(8deg); } }
+    @media (prefers-reduced-motion: reduce) { .math-symbol { animation: none; } }
+
+    .header-content { position: relative; z-index: 10; }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,.2); color: #fff; padding: 6px 18px; border-radius: 50px; font-size: .85rem; font-weight: 600; margin-bottom: 12px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,.3); }
+    .main-title { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.2; color: #fff; margin-bottom: 6px; text-shadow: 0 2px 4px rgba(0,0,0,.1); }
+    .sub-title { font-size: clamp(1.2rem, 2.5vw, 1.6rem); font-weight: 600; color: #e0f2fe; margin-bottom: 14px; }
+    .highlight { color: #fef08a; font-weight: 800; }
+    .mapel-pill { display: inline-block; background: #fff; color: #1e3a8a; padding: 7px 22px; border-radius: 12px; font-weight: 500; font-size: 1.05rem; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(15,23,42,.18); }
+    .mapel-pill strong { font-weight: 700; }
+    .materi-line { color: #e2e8f0; font-size: .95rem; margin: 0; }
+
+    .card { background-color: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,.05); color: #0f172a; }
+    .form-select, .form-control { background-color: #fff; border: 1px solid #cbd5e1; color: #0f172a; font-weight: 500; }
+    .form-select:focus, .form-control:focus { border-color: #0284c7; box-shadow: 0 0 0 .25rem rgba(2,132,199,.2); }
+
+    .option-box { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s, background-color .15s; font-weight: 500; color: #0f172a; }
+    .option-box:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .option-box:has(input:checked) { background: #e0f2fe; border-color: #0284c7; }
+    .option-box input { margin-top: .3rem; flex-shrink: 0; }
+    .opt-letter { font-weight: 700; color: #0369a1; margin-right: 6px; }
+    .soal-text img, .option-box img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 8px 0; -webkit-user-drag: none; pointer-events: none; }
+
+    .table { color: #0f172a !important; border-color: #cbd5e1 !important; }
+    .table td, .table th { color: #0f172a !important; background-color: #fff !important; }
+    .badge-diff { font-size: .8rem; padding: .4em .8em; font-weight: 600; }
+
+    .loading-overlay { display: flex; justify-content: center; align-items: center; position: fixed; inset: 0; background: rgba(255,255,255,.95); z-index: 9999; }
+    .warning-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; display: none; }
+
+    .grid-nomor { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .btn-nomor { width: 100%; height: 40px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: all .2s ease; border: 1px solid transparent; }
+    .btn-nomor.belum { background-color: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
+    .btn-nomor.dijawab { background-color: #10b981; color: #fff; border-color: #10b981; }
+    .btn-nomor.active { border: 2px solid #0284c7; box-shadow: 0 0 0 3px rgba(2,132,199,.25); transform: scale(1.05); }
+    .btn-nomor.belum.active { background-color: #e0f2fe; color: #0369a1; }
+
+    .legend-dot { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: middle; margin-right: 8px; }
+    .legend-dot.ok { background: #10b981; } .legend-dot.no { background: #f1f5f9; border: 1px solid #cbd5e1; } .legend-dot.now { background: #e0f2fe; border: 2px solid #0284c7; }
+
+    .soal-card { display: none; } .soal-card.active { display: block; }
+    .sticky-top-bar { background-color: rgba(255,255,255,.95); backdrop-filter: blur(10px); border: 1px solid #e2e8f0; }
+    .soal-text { font-size: 1.1rem; font-weight: 500; color: #0f172a; line-height: 1.6; }
+    .timer-danger { background-color: #dc2626 !important; color: #fff !important; }
+    .skor-besar { font-size: 3.5rem; font-weight: 800; line-height: 1; color: #0369a1; }
+    .rule-list li { margin-bottom: 4px; }
+    .ujian-card { transition: border-color .15s, transform .15s; }
+    .ujian-card:hover { border-color: #0284c7; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+<header class="hero-header">
+  <!-- Elemen Rumus & Ikon Sekolah Melayang -->
+  <div class="math-symbol s1">📖</div>
+  <div class="math-symbol s2">$$\int f(x)dx$$</div>
+  <div class="math-symbol s3">$$E=mc^2$$</div>
+  <div class="math-symbol s4">✏️</div>
+  <div class="math-symbol s5">$$\sum_{i=1}^n$$</div>
+  <div class="math-symbol s6">$$a^2+b^2=c^2$$</div>
+  <div class="header-content">
+    <div class="hero-badge" id="hBadge">✨ Selamat datang!</div>
+    <div class="hero-badge" id="hBadge">🏫 SMAN Taruna Nala Jawa Timur</div>
+    <h1 class="main-title" id="hJudul">Kurikulum SMANTARNALA</h1>
+    <h2 class="sub-title" id="hSubJudul" style="display:none;">bersama <span class="highlight" id="hGuru"></span></h2>
+    <div class="mapel-pill" id="hMapelWrap" style="display:none;">Mata Pelajaran : <strong id="hMapel"></strong></div>
+    <p class="materi-line" id="hMateri">Pilih mata pelajaran untuk memulai Try OUT.</p>
+  </div>
+</header>
+
+<div id="warningBanner" class="alert alert-danger warning-banner text-center fw-bold shadow" role="alert"></div>
+
+<div id="loading" class="loading-overlay">
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem;"></div>
+    <p class="mt-3 text-dark fw-bold" id="loadingText">Menghubungkan ke server…</p>
+  </div>
+</div>
+
+<!-- Modal serbaguna (menggantikan alert/confirm agar tidak memicu deteksi pelanggaran) -->
+<div class="modal fade" id="modalUmum" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:16px;">
+      <div class="modal-header"><h5 class="modal-title fw-bold" id="mJudul"></h5></div>
+      <div class="modal-body" id="mIsi"></div>
+      <div class="modal-footer" id="mTombol"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container my-5" style="max-width:1000px;">
+
+  <!-- DAFTAR MAPEL -->
+  <div id="area-daftar" style="display:none;">
+    <h5 class="fw-bold text-primary mb-3">📚 Pilih Mata Pelajaran</h5>
+    <div class="row g-3" id="listUjian"></div>
+  </div>
+
+  <!-- IDENTITAS -->
+  <div id="form-identitas" style="display:none;">
+    <div class="card p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
+        <h5 class="fw-bold text-primary mb-0">📋 Identitas Siswa</h5>
+        <a class="small fw-semibold text-decoration-none" id="linkGantiMapel" href="#" style="display:none;">← Pilih mapel lain</a>
+      </div>
+      <p class="text-secondary small mb-3" id="judulKuis"></p>
+      <div class="alert alert-info py-2 small" id="alertJadwal" style="display:none;"></div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-bold" for="inputKelas">Kelas</label>
+          <select class="form-select" id="inputKelas"><option value="">-- Pilih Kelas --</option></select>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label fw-bold" for="inputNama">Nama Lengkap</label>
+          <input class="form-control" list="listNama" id="inputNama" placeholder="Pilih kelas dulu, lalu ketik nama Anda…" autocomplete="off">
+          <datalist id="listNama"></datalist>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-bold" for="inputAbsen">Nomor Absen</label>
+          <input type="number" class="form-control" id="inputAbsen" placeholder="Contoh: 12" min="1">
+        </div>
+        <div class="col-md-8">
+          <label class="form-label fw-bold" for="inputKode">Kode Akses <span class="text-muted fw-normal">(isi jika diberikan guru)</span></label>
+          <input type="text" class="form-control" id="inputKode" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="alert alert-warning border-0 bg-warning bg-opacity-10 text-dark mt-4 mb-0" role="alert">
+        <strong>⚠️ Aturan &amp; Sistem Keamanan Kuis</strong>
+        <ul class="mb-0 ps-3 mt-1 small rule-list" id="daftarAturan"></ul>
+      </div>
+      <button class="btn btn-primary text-white mt-4 w-100 py-2 fw-bold fs-5 shadow-sm" id="btnMulai">Mulai Kerjakan Kuis 🚀</button>
+    </div>
+
+    <div class="card p-4">
+      <h5 class="fw-bold text-primary mb-3">📊 Sistem Penilaian</h5>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-3 text-center">
+          <thead><tr><th class="text-start">Tingkat</th><th>Jumlah Soal</th><th>Bobot / Soal</th><th>Skor Maksimum</th></tr></thead>
+          <tbody id="tabelBobot"></tbody>
+        </table>
+      </div>
+      <ul class="small mb-0 rule-list">
+        <li><strong>Pilihan ganda:</strong> benar mendapat poin penuh, salah atau kosong mendapat 0 (tidak ada pengurangan).</li>
+        <li><strong>Pilihan majemuk &amp; Benar/Salah:</strong> setiap pernyataan dinilai. Poin diberikan bila lebih dari separuh pernyataan dijawab tepat, sehingga menebak acak tidak menguntungkan. Semua tepat = poin penuh.</li>
+        <li><strong>Skor akhir</strong> = jumlah (bobot × capaian) ÷ jumlah bobot × 100. Jika semua jawaban benar, skor Anda <strong>100</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AREA KUIS -->
+  <div id="area-kuis" style="display:none;">
+    <div class="card p-3 sticky-top-bar sticky-top shadow-sm mb-4 d-flex flex-row flex-wrap justify-content-between align-items-center gap-2" style="top:15px;z-index:1000;">
+      <div><strong class="text-primary">Siswa:</strong> <span id="dispNama" class="fw-semibold"></span> (<span id="dispKelas"></span> / Absen: <span id="dispAbsen"></span>)</div>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="small text-muted" id="saveStatus"></span>
+        <span class="badge bg-danger fs-6 fw-semibold" id="pelanggaranCount">Pelanggaran: 0</span>
+        <span class="badge bg-warning text-dark fs-6 fw-semibold" id="timer">Sisa Waktu: --:--</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4 col-lg-3">
+        <div class="card p-3 sticky-top" style="top:90px;">
+          <h6 class="fw-bold text-primary mb-3">Navigasi Soal</h6>
+          <div class="grid-nomor" id="gridNomor"></div>
+          <hr class="my-3 border-secondary-subtle">
+          <div class="d-flex flex-column gap-2 small fw-medium">
+            <div><span class="legend-dot ok"></span>Sudah dijawab</div>
+            <div><span class="legend-dot no"></span>Belum dijawab</div>
+            <div><span class="legend-dot now"></span>Sedang dibuka</div>
+          </div>
+          <button class="btn btn-success w-100 fw-bold mt-4 shadow-sm" id="btnKirim">Selesai &amp; Kirim</button>
+        </div>
+      </div>
+      <div class="col-md-8 col-lg-9">
+        <div id="soal-container"></div>
+        <div class="d-flex justify-content-between mt-3">
+          <button class="btn btn-outline-secondary fw-bold" id="btnPrev">← Sebelumnya</button>
+          <button class="btn btn-primary fw-bold" id="btnNext">Selanjutnya →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HASIL -->
+  <div id="area-hasil" style="display:none;">
+    <div class="card p-4 text-center mb-4">
+      <h3 class="fw-bold text-success mb-2">🎉 Kuis Selesai!</h3>
+      <p class="fw-semibold text-primary mb-1" id="resMapel"></p>
+      <p class="text-secondary mb-1" id="hasilCatatan">Jawaban Anda telah tersimpan di rekapitulasi guru.</p>
+      <p class="small fw-semibold text-danger mb-3" id="hasilStatus"></p>
+
+      <div id="blokSkor" class="mb-4">
+        <div class="skor-besar" id="resSkor">0</div>
+        <div class="text-muted fw-semibold">dari 100</div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-success mb-0" id="resBenar">0</h4><small class="text-muted fw-semibold">Soal Benar Sempurna</small></div></div>
+        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-warning mb-0" id="resTotalWaktu">00:00</h4><small class="text-muted fw-semibold">Total Waktu</small></div></div>
+        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-dark mb-0" id="resRataWaktu">0 detik</h4><small class="text-muted fw-semibold">Rata-rata / Soal</small></div></div>
+        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-danger mb-0" id="resPelanggaran">0</h4><small class="text-muted fw-semibold">Pelanggaran</small></div></div>
+      </div>
+
+      <div class="table-responsive mt-4" id="blokRincian">
+        <table class="table table-bordered align-middle text-center mb-0">
+          <thead><tr><th class="text-start">Tingkat</th><th>Skor Anda</th><th>Skor Maksimum</th></tr></thead>
+          <tbody id="tabelRincian"></tbody>
+        </table>
+      </div>
+      <a class="btn btn-outline-primary fw-bold mt-4 align-self-center" id="btnMapelLain" href="#" style="display:none;">Kerjakan mapel lain</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ==========================================================================
+  //  KONFIGURASI — hanya URL Web App. Soal, kunci, durasi & penilaian ada di server.
+  //  Link siswa:  index.html?ujian=mtk   (langsung ke mapel)  |  index.html  (daftar mapel)
+  // ==========================================================================
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1guSW_31VFmNQr9_sooItOxtTQ296Sbp73Q8Tf1oL_GLsP16dPGM5g9Zzhn-RamhT/exec";
+  const PARAM_UJIAN = (new URLSearchParams(location.search).get("ujian") || "").trim().toLowerCase();
+
+  const $ = (id) => document.getElementById(id);
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const S = {
+    ujian: PARAM_UJIAN, info: null, token: null, soal: [], jawaban: {}, idx: 0,
+    deadline: 0, pelanggaran: 0, maks: 5,
+    aktif: false, mengirim: false, dirty: false, menyimpan: false,
+    timer: null, saveTimer: null, lastViolation: 0, banyakUjian: false
+  };
+  let modalObj = null;
+
+  // ---------- UI dasar ----------
+  function tampilLoading(t) { $("loadingText").textContent = t || "Memuat…"; $("loading").style.display = "flex"; }
+  function sembunyiLoading() { $("loading").style.display = "none"; }
+
+  function tampilModal({ judul, isi, tombol }) {
+    return new Promise((resolve) => {
+      if (!modalObj) modalObj = new bootstrap.Modal($("modalUmum"));
+      $("mJudul").innerHTML = judul;
+      $("mIsi").innerHTML = isi;
+      const f = $("mTombol"); f.innerHTML = "";
+      tombol.forEach((t) => {
+        const b = document.createElement("button");
+        b.className = "btn fw-bold " + t.kelas; b.textContent = t.label;
+        b.onclick = () => { $("modalUmum").addEventListener("hidden.bs.modal", () => resolve(t.nilai), { once: true }); modalObj.hide(); };
+        f.appendChild(b);
+      });
+      modalObj.show();
+    });
+  }
+  const modalOk = (judul, isi) => tampilModal({ judul, isi, tombol: [{ label: "Mengerti", kelas: "btn-primary", nilai: true }] });
+
+  function api(aksi, payload, opts) {
+    return fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi }, payload)), keepalive: !!(opts && opts.keepalive) }).then((r) => r.json());
+  }
+  const getJson = (query) => fetch(SCRIPT_URL + "?" + query).then((r) => r.json());
+
+  // ---------- Muat awal: daftar mapel atau satu mapel ----------
+  async function muatAwal() {
+    tampilLoading("Menghubungkan ke server…");
+    try {
+      if (PARAM_UJIAN) await muatUjian(PARAM_UJIAN);
+      else await muatDaftar();
+      sembunyiLoading();
+    } catch (e) {
+      sembunyiLoading();
+      await tampilModal({ judul: "Gagal terhubung", isi: "Data kuis tidak dapat dimuat. Periksa koneksi internet Anda.<br><small class='text-muted'>" + esc(e.message) + "</small>", tombol: [{ label: "Coba Lagi", kelas: "btn-primary", nilai: true }] });
+      muatAwal();
+    }
+  }
+
+  async function muatDaftar() {
+    const res = await getJson("action=daftarUjian");
+    if (res.status !== "OK") throw new Error(res.message || "Respons server tidak valid");
+    const list = res.ujian || [];
+    if (list.length === 1) { S.ujian = list[0].id; await muatUjian(list[0].id); return; }
+    if (list.length === 0) {
+      $("listUjian").innerHTML = "<div class='col-12'><div class='alert alert-secondary'>Belum ada ujian yang tersedia.</div></div>";
+    } else {
+      $("listUjian").innerHTML = list.map((u) => {
+        const badge = u.status === "BUKA" ? "<span class='badge bg-success'>Dibuka</span>"
+          : u.status === "BELUM" ? "<span class='badge bg-warning text-dark'>Dibuka " + esc(u.buka) + "</span>"
+          : "<span class='badge bg-secondary'>Ditutup</span>";
+        return "<div class='col-md-6'><div class='card p-4 h-100 ujian-card'>" +
+          "<div class='d-flex justify-content-between align-items-start gap-2'><div class='fw-bold fs-5 text-primary'>" + esc(u.mapel) + "</div>" + badge + "</div>" +
+          "<div class='fw-semibold mb-1'>" + esc(u.judul) + "</div>" +
+          "<div class='small text-muted mb-3'>" + esc(u.guru) + " · " + u.jumlahSoal + " soal · " + Math.round(u.waktu / 60) + " menit</div>" +
+          "<a class='btn btn-primary fw-bold mt-auto' href='?ujian=" + encodeURIComponent(u.id) + "'>Masuk</a></div></div>";
+      }).join("");
+    }
+    S.banyakUjian = list.length > 1;
+    $("area-daftar").style.display = "block";
+  }
+
+  async function muatUjian(id) {
+    const res = await getJson("action=info&ujian=" + encodeURIComponent(id));
+    if (res.status !== "OK") {
+      if (res.code === "UJIAN_TIDAK_ADA") {
+        sembunyiLoading();
+        await modalOk("Ujian tidak ditemukan", "Kode ujian pada link tidak dikenal. Anda akan diarahkan ke daftar mapel.");
+        location.replace(location.pathname);
+        return;
+      }
+      throw new Error(res.message || "Respons server tidak valid");
+    }
+    S.ujian = res.ujian; S.info = res; S.maks = res.maksPelanggaran;
+    terapkanInfo(res);
+    $("form-identitas").style.display = "block";
+    // Tampilkan tautan ganti mapel hanya jika ada lebih dari satu ujian
+    try {
+      const d = await getJson("action=daftarUjian");
+      S.banyakUjian = (d.ujian || []).length > 1;
+      if (S.banyakUjian) { const a = $("linkGantiMapel"); a.href = location.pathname; a.style.display = ""; }
+    } catch (e) { /* opsional */ }
+  }
+
+  function terapkanInfo(i) {
+    document.title = i.mapel + " — " + i.judul;
+    $("hBadge").textContent = "✨ Taklukkan " + i.mapel + "!";
+    $("hJudul").textContent = "Belajar " + i.mapel;
+    $("hGuru").textContent = i.guru; $("hSubJudul").style.display = "";
+    $("hMapel").textContent = i.mapel; $("hMapelWrap").style.display = "";
+    $("hMateri").textContent = "Materi: " + i.materi;
+    $("judulKuis").textContent = i.judul;
+
+    const aj = $("alertJadwal");
+    if (i.statusJadwal === "BELUM") { aj.textContent = "Ujian ini baru dibuka pada " + i.buka + "."; aj.style.display = ""; }
+    else if (i.statusJadwal === "TUTUP") { aj.textContent = "Ujian ini sudah ditutup" + (i.tutup ? " pada " + i.tutup : "") + ". Hanya siswa yang sedang mengerjakan yang dapat melanjutkan."; aj.style.display = ""; }
+    else if (i.tutup) { aj.textContent = "Ujian ditutup pada " + i.tutup + "."; aj.style.display = ""; }
+
+    const sel = $("inputKelas");
+    (i.kelas || []).forEach((k) => { const o = document.createElement("option"); o.value = k; o.textContent = k; sel.appendChild(o); });
+
+    const menit = Math.round(i.waktu / 60);
+    $("daftarAturan").innerHTML = [
+      "Nama harus <strong>terdaftar di database</strong> sekolah pada kelas yang dipilih.",
+      "Kuis berisi <strong>" + i.jumlahSoal + " soal</strong> dengan waktu <strong>" + menit + " menit</strong>. Waktu dihitung oleh server; memuat ulang halaman <strong>tidak mengulang waktu</strong>.",
+      "Kuis hanya dapat dikerjakan <strong>satu kali</strong>. Jawaban tersimpan otomatis dan terkirim sendiri saat waktu habis.",
+      "Dilarang berpindah tab/aplikasi, membuka jendela lain, atau menggunakan AI. Setiap pelanggaran dicatat; pada <strong>" + i.maksPelanggaran + " pelanggaran</strong> kuis dikirim otomatis.",
+      "Jika koneksi terputus atau halaman tertutup, masuk kembali dengan identitas yang sama untuk melanjutkan (dicatat sebagai 1 pelanggaran).",
+      "Klik kanan, salin, dan tempel dinonaktifkan. Urutan soal dan pilihan jawaban diacak untuk tiap siswa."
+    ].map((t) => "<li>" + t + "</li>").join("");
+
+    const total = i.bobot.reduce((a, b) => a + b.poinMaks, 0);
+    $("tabelBobot").innerHTML = i.bobot.map((b) => "<tr><td class='text-start'>" + esc(b.tingkat) + "</td><td>" + b.jumlahSoal + "</td><td>" + b.bobotPerSoal + "</td><td>" + b.poinMaks + "</td></tr>").join("") +
+      "<tr class='fw-bold'><td class='text-start'>Total</td><td>" + i.jumlahSoal + "</td><td>–</td><td>" + Math.round(total) + "</td></tr>";
+  }
+
+  $("inputKelas").addEventListener("change", async () => {
+    const k = $("inputKelas").value, dl = $("listNama");
+    dl.innerHTML = ""; $("inputNama").value = "";
+    if (!k) return;
+    try {
+      const res = await getJson("action=getNama&ujian=" + encodeURIComponent(S.ujian) + "&kelas=" + encodeURIComponent(k));
+      (res.nama || []).forEach((n) => { const o = document.createElement("option"); o.value = n; dl.appendChild(o); });
+    } catch (e) { /* saran nama bersifat opsional */ }
+  });
+
+  // ---------- Memulai kuis ----------
+  async function mulaiKuis() {
+    const nama = $("inputNama").value.trim(), kelas = $("inputKelas").value, absen = $("inputAbsen").value.trim(), kode = $("inputKode").value.trim();
+    if (!nama || !kelas || !absen) { await modalOk("Data belum lengkap", "Isi kelas, nama, dan nomor absen terlebih dahulu."); return; }
+
+    tampilLoading("Memverifikasi data dan menyiapkan soal…");
+    try {
+      const res = await api("mulai", { ujian: S.ujian, nama, kelas, absen, kode });
+      sembunyiLoading();
+      if (res.status === "SELESAI") {
+        await modalOk("Sesi Anda telah berakhir", "Waktu habis atau batas pelanggaran tercapai saat Anda keluar dari halaman. Jawaban yang tersimpan sudah dinilai.");
+        tampilHasil(res.hasil); return;
+      }
+      if (res.status !== "OK") { await modalOk("Tidak dapat memulai", esc(res.message || "Terjadi kesalahan.")); return; }
+      await mulaiSesi(res);
+    } catch (e) {
+      sembunyiLoading();
+      await modalOk("Koneksi bermasalah", "Permintaan tidak sampai ke server. Periksa internet Anda lalu coba lagi.");
+    }
+  }
+
+  async function mulaiSesi(res) {
+    S.token = res.token; S.soal = res.soal; S.jawaban = res.jawaban || {};
+    S.pelanggaran = res.pelanggaran; S.deadline = Date.now() + res.sisaDetik * 1000;
+    $("dispNama").textContent = res.nama; $("dispKelas").textContent = res.kelas; $("dispAbsen").textContent = res.absen;
+    $("form-identitas").style.display = "none"; $("area-kuis").style.display = "block";
+    $("pelanggaranCount").textContent = "Pelanggaran: " + S.pelanggaran + "/" + S.maks;
+
+    renderSoal(); pulihkanJawaban(); pindahSoal(0);
+    S.aktif = true; S.lastViolation = Date.now() + 2000;
+    tick(); S.timer = setInterval(tick, 1000);
+    window.scrollTo({ top: 0 });
+
+    if (res.lanjut) {
+      await modalOk("Sesi dilanjutkan", "Jawaban terakhir yang tersimpan telah dipulihkan. Waktu tetap berjalan sejak mulai pertama, dan memuat ulang halaman dicatat sebagai 1 pelanggaran.");
+    }
+  }
+
+  // ---------- Timer (mengikuti waktu server) ----------
+  function tick() {
+    const sisa = Math.max(0, Math.round((S.deadline - Date.now()) / 1000));
+    const m = Math.floor(sisa / 60), d = sisa % 60;
+    const el = $("timer");
+    el.textContent = "Sisa Waktu: " + String(m).padStart(2, "0") + ":" + String(d).padStart(2, "0");
+    el.classList.toggle("timer-danger", sisa <= 300);
+    if (sisa <= 0 && S.aktif && !S.mengirim) kirimJawaban(true);
+  }
+
+  // ---------- Render soal ----------
+  function renderSoal() {
+    const cont = $("soal-container"), grid = $("gridNomor");
+    cont.innerHTML = ""; grid.innerHTML = "";
+
+    S.soal.forEach((s, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "btn-nomor belum"; btn.id = "nav_" + idx; btn.textContent = idx + 1;
+      btn.addEventListener("click", () => pindahSoal(idx));
+      grid.appendChild(btn);
+
+      const tipeLabel = { PG: "Pilihan Ganda", PGK: "Pilihan Majemuk", BS: "Benar / Salah" }[s.tipe] || s.tipe;
+      let h = '<div class="d-flex justify-content-between align-items-center mb-3">' +
+        '<span class="fw-bold fs-5 text-primary">Soal No. ' + (idx + 1) + ' <small class="text-muted fs-6">(' + tipeLabel + ')</small></span>' +
+        '<span class="badge bg-secondary badge-diff">' + esc(s.tingkat) + '</span></div>' +
+        '<p class="soal-text mb-4">' + s.soal + '</p>';
+
+      if (s.tipe === "PG") {
+        s.opsi.forEach((o, i) => {
+          h += '<label class="option-box" for="q_' + idx + '_' + i + '"><input class="form-check-input" type="radio" name="q_' + idx + '" id="q_' + idx + '_' + i + '" value="' + i + '" data-idx="' + idx + '"><span><span class="opt-letter">' + String.fromCharCode(65 + i) + '.</span>' + o + '</span></label>';
+        });
+      } else if (s.tipe === "PGK") {
+        s.opsi.forEach((o, i) => {
+          h += '<label class="option-box" for="q_' + idx + '_' + i + '"><input class="form-check-input" type="checkbox" id="q_' + idx + '_' + i + '" value="' + i + '" data-idx="' + idx + '"><span>' + o + '</span></label>';
+        });
+      } else if (s.tipe === "BS") {
+        h += '<table class="table table-bordered mt-2"><tbody>';
+        s.poin.forEach((p, i) => {
+          h += '<tr><td class="align-middle fw-medium">' + p + '</td><td width="140" class="text-center align-middle bg-light">' +
+            '<input type="radio" class="btn-check" name="bs_' + idx + '_' + i + '" id="bs_' + idx + '_' + i + '_B" value="B" data-idx="' + idx + '"><label class="btn btn-outline-success btn-sm me-1 fw-bold" for="bs_' + idx + '_' + i + '_B">B</label>' +
+            '<input type="radio" class="btn-check" name="bs_' + idx + '_' + i + '" id="bs_' + idx + '_' + i + '_S" value="S" data-idx="' + idx + '"><label class="btn btn-outline-danger btn-sm fw-bold" for="bs_' + idx + '_' + i + '_S">S</label>' +
+            '</td></tr>';
+        });
+        h += '</tbody></table>';
+      }
+
+      const card = document.createElement("div");
+      card.className = "card p-4 soal-card"; card.id = "soal_card_" + idx; card.innerHTML = h;
+      cont.appendChild(card);
+    });
+    typeset(0);
+  }
+
+  function typeset(n) {
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise.then(() => MathJax.typesetPromise()).catch(() => {});
+    } else if (n < 40) { setTimeout(() => typeset(n + 1), 300); }
+  }
+
+  $("soal-container").addEventListener("change", (e) => {
+    const t = e.target;
+    if (!t.dataset || t.dataset.idx === undefined) return;
+    const idx = +t.dataset.idx, s = S.soal[idx];
+    if (s.tipe === "PG") {
+      S.jawaban[s.id] = +t.value;
+    } else if (s.tipe === "PGK") {
+      S.jawaban[s.id] = [...document.querySelectorAll("#soal_card_" + idx + " input[type=checkbox]:checked")].map((x) => +x.value).sort((a, b) => a - b);
+    } else {
+      S.jawaban[s.id] = s.poin.map((_, i) => { const c = document.querySelector('input[name="bs_' + idx + '_' + i + '"]:checked'); return c ? c.value : null; });
+    }
+    perbaruiNav(idx);
+    tandaiPerubahan();
+  });
+
+  function pulihkanJawaban() {
+    S.soal.forEach((s, idx) => {
+      const a = S.jawaban[s.id];
+      if (a === undefined || a === null) return;
+      if (s.tipe === "PG") { const el = $("q_" + idx + "_" + a); if (el) el.checked = true; }
+      else if (s.tipe === "PGK" && Array.isArray(a)) a.forEach((p) => { const el = $("q_" + idx + "_" + p); if (el) el.checked = true; });
+      else if (s.tipe === "BS" && Array.isArray(a)) a.forEach((v, i) => { if (v) { const el = $("bs_" + idx + "_" + i + "_" + v); if (el) el.checked = true; } });
+      perbaruiNav(idx);
+    });
+  }
+
+  function sudahDijawab(idx) {
+    const s = S.soal[idx], a = S.jawaban[s.id];
+    if (a === undefined || a === null) return false;
+    if (s.tipe === "PG") return typeof a === "number";
+    if (s.tipe === "PGK") return Array.isArray(a) && a.length > 0;
+    return Array.isArray(a) && a.length === s.poin.length && a.every((v) => v === "B" || v === "S");
+  }
+  function perbaruiNav(idx) {
+    const b = $("nav_" + idx), ok = sudahDijawab(idx);
+    b.classList.toggle("dijawab", ok); b.classList.toggle("belum", !ok);
+  }
+
+  function pindahSoal(target) {
+    if (target < 0 || target >= S.soal.length) return;
+    document.querySelectorAll(".soal-card, .btn-nomor").forEach((el) => el.classList.remove("active"));
+    S.idx = target;
+    $("soal_card_" + target).classList.add("active"); $("nav_" + target).classList.add("active");
+    $("btnPrev").disabled = target === 0; $("btnNext").disabled = target === S.soal.length - 1;
+  }
+
+  // ---------- Simpan otomatis ----------
+  function tandaiPerubahan() {
+    S.dirty = true; $("saveStatus").textContent = "Belum tersimpan…";
+    if (!S.saveTimer) S.saveTimer = setTimeout(simpanSekarang, 5000);
+  }
+  async function simpanSekarang() {
+    clearTimeout(S.saveTimer); S.saveTimer = null;
+    if (!S.aktif || !S.dirty || S.menyimpan || S.mengirim) return;
+    S.menyimpan = true; S.dirty = false; $("saveStatus").textContent = "Menyimpan…";
+    try {
+      const res = await api("simpan", { token: S.token, jawaban: S.jawaban }, { keepalive: true });
+      if (res.status === "OK") {
+        if (typeof res.sisaDetik === "number" && !res.selesai) S.deadline = Date.now() + res.sisaDetik * 1000;
+        $("saveStatus").textContent = S.dirty ? "Belum tersimpan…" : "✓ Tersimpan";
+      } else { S.dirty = true; $("saveStatus").textContent = "Gagal menyimpan"; }
+    } catch (e) { S.dirty = true; $("saveStatus").textContent = "Offline — mencoba lagi…"; }
+    finally { S.menyimpan = false; if (S.dirty && !S.saveTimer) S.saveTimer = setTimeout(simpanSekarang, 8000); }
+  }
+
+  // ---------- Pelanggaran ----------
+  function laporPelanggaran(jenis) {
+    if (!S.aktif || S.mengirim) return;
+    const now = Date.now();
+    if (now - S.lastViolation < 2000) return;
+    S.lastViolation = now;
+    S.pelanggaran++;
+    $("pelanggaranCount").textContent = "Pelanggaran: " + S.pelanggaran + "/" + S.maks;
+    const b = $("warningBanner");
+    b.textContent = "⚠️ PERINGATAN: Anda meninggalkan halaman kuis! Pelanggaran " + S.pelanggaran + " dari " + S.maks + " telah dicatat. Pada batas maksimum, kuis dikirim otomatis.";
+    b.style.display = "block"; setTimeout(() => { b.style.display = "none"; }, 5000);
+
+    api("catat", { token: S.token, jenis, jawaban: S.jawaban }, { keepalive: true }).then((res) => {
+      if (res.status !== "OK") return;
+      S.pelanggaran = res.pelanggaran;
+      $("pelanggaranCount").textContent = "Pelanggaran: " + S.pelanggaran + "/" + S.maks;
+      if (res.selesai && res.hasil) tampilHasil(res.hasil);
+    }).catch(() => {});
+  }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) { laporPelanggaran("PINDAH_TAB"); simpanSekarang(); } });
+  window.addEventListener("blur", () => { setTimeout(() => { if (!document.hidden) laporPelanggaran("KEHILANGAN_FOKUS"); }, 50); });
+
+  // ---------- Pengiriman ----------
+  async function konfirmasiKirim() {
+    const belum = S.soal.filter((_, i) => !sudahDijawab(i)).length;
+    const isi = (belum > 0 ? "Masih ada <strong>" + belum + "</strong> soal yang belum dijawab lengkap. " : "Semua soal sudah dijawab. ") + "Setelah dikirim, jawaban tidak dapat diubah.";
+    const ya = await tampilModal({ judul: "Kirim jawaban sekarang?", isi, tombol: [
+      { label: "Periksa lagi", kelas: "btn-outline-secondary", nilai: false },
+      { label: "Ya, kirim", kelas: "btn-success", nilai: true }] });
+    if (ya) kirimJawaban(false);
+  }
+
+  async function kirimJawaban(otomatis) {
+    if (S.mengirim || !S.aktif) return;
+    S.mengirim = true; clearTimeout(S.saveTimer); S.saveTimer = null;
+    tampilLoading(otomatis ? "Waktu habis. Mengirim jawaban Anda…" : "Mengirim jawaban dan menghitung nilai…");
+
+    for (let i = 0; i < 3; i++) {
+      try {
+        const res = await api("kirim", { token: S.token, jawaban: S.jawaban });
+        if (res.status === "OK") { tampilHasil(res.hasil); return; }
+        sembunyiLoading(); S.mengirim = false;
+        await modalOk("Pengiriman ditolak", esc(res.message || "Terjadi kesalahan di server."));
+        return;
+      } catch (e) { await sleep(2000 * (i + 1)); }
+    }
+    sembunyiLoading(); S.mengirim = false;
+    await tampilModal({ judul: "Pengiriman gagal", isi: "Jawaban belum terkirim karena koneksi bermasalah. <strong>Jangan tutup halaman ini.</strong> Pastikan internet aktif lalu kirim ulang.", tombol: [{ label: "Kirim Ulang", kelas: "btn-primary", nilai: true }] });
+    kirimJawaban(otomatis);
+  }
+
+  // ---------- Hasil ----------
+  function tampilHasil(h) {
+    S.aktif = false; S.mengirim = false;
+    clearInterval(S.timer); clearTimeout(S.saveTimer);
+    sembunyiLoading();
+    $("area-kuis").style.display = "none"; $("form-identitas").style.display = "none"; $("area-hasil").style.display = "block";
+    window.scrollTo({ top: 0 });
+    if (S.info) $("resMapel").textContent = "Mata Pelajaran : " + S.info.mapel;
+    if (S.banyakUjian) { const a = $("btnMapelLain"); a.href = location.pathname; a.style.display = ""; }
+    if (!h) return;
+
+    const m = Math.floor(h.waktuDetik / 60), d = h.waktuDetik % 60;
+    $("resTotalWaktu").textContent = m + "m " + d + "s";
+    $("resRataWaktu").textContent = h.rataDetik + " detik";
+    $("resPelanggaran").textContent = h.pelanggaran;
+
+    const status = {
+      WAKTU_HABIS: "Dikirim otomatis karena waktu habis.",
+      PELANGGARAN: "Dikirim otomatis karena batas pelanggaran tercapai.",
+      TERLAMBAT: "Dikirim melewati batas waktu; jawaban terakhir yang tersimpan yang dinilai."
+    }[h.status] || "";
+    $("hasilStatus").textContent = status;
+
+    if (h.tampilkanSkor && typeof h.skor === "number") {
+      $("blokSkor").style.display = ""; $("blokRincian").style.display = "";
+      $("resSkor").textContent = h.skor;
+      $("resBenar").textContent = h.jumlahSempurna + " / " + h.totalSoal;
+      $("tabelRincian").innerHTML = (h.rincian || []).map((r) => "<tr><td class='text-start'>" + esc(r.tingkat) + "</td><td class='fw-bold'>" + r.skor + "</td><td>" + r.maks + "</td></tr>").join("");
+    } else {
+      $("blokSkor").style.display = "none"; $("blokRincian").style.display = "none";
+      $("resBenar").textContent = "–";
+      $("hasilCatatan").textContent = "Jawaban Anda telah tersimpan. Nilai akan diumumkan oleh guru.";
+    }
+  }
+
+  // ---------- Pengaman ringan sisi klien ----------
+  window.addEventListener("beforeunload", (e) => { if (S.aktif) { e.preventDefault(); e.returnValue = ""; } });
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+  ["copy", "cut", "paste"].forEach((ev) => document.addEventListener(ev, (e) => { if (!e.target.closest("input, textarea, select")) e.preventDefault(); }));
+  document.addEventListener("keydown", (e) => {
+    const k = (e.key || "").toLowerCase();
+    if (k === "f12" || (e.ctrlKey && e.shiftKey && ["i", "j", "c"].includes(k)) || (e.ctrlKey && ["u", "s", "p"].includes(k))) { e.preventDefault(); return false; }
+  });
+
+  // ---------- Inisialisasi ----------
+  $("btnMulai").addEventListener("click", mulaiKuis);
+  $("btnKirim").addEventListener("click", konfirmasiKirim);
+  $("btnPrev").addEventListener("click", () => pindahSoal(S.idx - 1));
+  $("btnNext").addEventListener("click", () => pindahSoal(S.idx + 1));
+  window.addEventListener("load", muatAwal);
+</script>
+</body>
+</html>
