@@ -26,8 +26,13 @@
       display: flex; justify-content: center; align-items: center; text-align: center; overflow: hidden; padding: 2.5rem 1.5rem;
       box-shadow: 0 4px 20px rgba(0,0,0,.08); }
     .math-symbol { position: absolute; color: rgba(255,255,255,.15); font-size: 4rem; font-weight: 800; animation: float 6s ease-in-out infinite; pointer-events: none; }
-    .s1 { top: 15%; left: 8%; } .s2 { bottom: 15%; right: 10%; animation-delay: 2s; font-size: 5rem; }
-    .s3 { top: 20%; right: 12%; animation-delay: 4s; } .s4 { bottom: 10%; left: 12%; animation-delay: 1s; font-size: 5.5rem; }
+    .math-symbol mjx-container { margin: 0 !important; }
+    .s1 { top: 15%; left: 8%; }
+    .s2 { bottom: 15%; right: 10%; animation-delay: 2s; font-size: 2.2rem; }
+    .s3 { top: 20%; right: 12%; animation-delay: 4s; font-size: 2.2rem; }
+    .s4 { bottom: 10%; left: 12%; animation-delay: 1s; font-size: 5.5rem; }
+    .s5 { bottom: 40%; left: 3%; animation-delay: 3s; font-size: 2rem; }
+    .s6 { top: 8%; left: 40%; animation-delay: 5s; font-size: 2rem; }
     @keyframes float { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(8deg); } }
     @media (prefers-reduced-motion: reduce) { .math-symbol { animation: none; } }
 
@@ -39,6 +44,12 @@
     .mapel-pill { display: inline-block; background: #fff; color: #1e3a8a; padding: 7px 22px; border-radius: 12px; font-weight: 500; font-size: 1.05rem; margin-bottom: 12px; box-shadow: 0 4px 14px rgba(15,23,42,.18); }
     .mapel-pill strong { font-weight: 700; }
     .materi-line { color: #e2e8f0; font-size: .95rem; margin: 0; }
+
+    /* Mode ujian: header besar disembunyikan, diganti bar ringkas */
+    body.mode-ujian .hero-header { display: none; }
+    body.mode-ujian #kontainer { margin-top: 12px !important; margin-bottom: 24px !important; }
+    .bar-ujian { top: 8px; z-index: 1000; border-radius: 12px; }
+    .nav-card { top: 72px; }
 
     .card { background-color: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,.05); color: #0f172a; }
     .form-select, .form-control { background-color: #fff; border: 1px solid #cbd5e1; color: #0f172a; font-weight: 500; }
@@ -57,6 +68,7 @@
 
     .loading-overlay { display: flex; justify-content: center; align-items: center; position: fixed; inset: 0; background: rgba(255,255,255,.95); z-index: 9999; }
     .warning-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; display: none; }
+    .toast-mini { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 12px; z-index: 1060; display: none; font-weight: 500; font-size: .9rem; box-shadow: 0 8px 24px rgba(15,23,42,.3); }
 
     .grid-nomor { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     .btn-nomor { width: 100%; height: 40px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: all .2s ease; border: 1px solid transparent; }
@@ -90,15 +102,16 @@
   <div class="math-symbol s6">$$a^2+b^2=c^2$$</div>
   <div class="header-content">
     <div class="hero-badge" id="hBadge">✨ Selamat datang!</div>
-    <div class="hero-badge" id="hBadge">🏫 SMAN Taruna Nala Jawa Timur</div>
-    <h1 class="main-title" id="hJudul">Kurikulum SMANTARNALA</h1>
+    <div class="hero-badge" id="hSekolah">🏫 SMAN Taruna Nala Jawa Timur</div>
+    <h1 class="main-title" id="hJudul">SIAP MENGHADAPI TKA 2026</h1>
     <h2 class="sub-title" id="hSubJudul" style="display:none;">bersama <span class="highlight" id="hGuru"></span></h2>
     <div class="mapel-pill" id="hMapelWrap" style="display:none;">Mata Pelajaran : <strong id="hMapel"></strong></div>
-    <p class="materi-line" id="hMateri">Pilih mata pelajaran untuk memulai Try OUT.</p>
+    <p class="materi-line" id="hMateri">copyright @Kurikulum SMANTARNALA</p>
   </div>
 </header>
 
 <div id="warningBanner" class="alert alert-danger warning-banner text-center fw-bold shadow" role="alert"></div>
+<div id="toast" class="toast-mini" role="status"></div>
 
 <div id="loading" class="loading-overlay">
   <div class="text-center">
@@ -118,7 +131,7 @@
   </div>
 </div>
 
-<div class="container my-5" style="max-width:1000px;">
+<div class="container my-5" id="kontainer" style="max-width:1000px;">
 
   <!-- DAFTAR MAPEL -->
   <div id="area-daftar" style="display:none;">
@@ -180,18 +193,21 @@
 
   <!-- AREA KUIS -->
   <div id="area-kuis" style="display:none;">
-    <div class="card p-3 sticky-top-bar sticky-top shadow-sm mb-4 d-flex flex-row flex-wrap justify-content-between align-items-center gap-2" style="top:15px;z-index:1000;">
-      <div><strong class="text-primary">Siswa:</strong> <span id="dispNama" class="fw-semibold"></span> (<span id="dispKelas"></span> / Absen: <span id="dispAbsen"></span>)</div>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
+    <!-- Header ringkas: hanya mapel, nama siswa, kelas (+ penanda waktu & pelanggaran) -->
+    <div class="card sticky-top-bar sticky-top bar-ujian shadow-sm mb-3 d-flex flex-row flex-wrap justify-content-between align-items-center gap-2 px-3 py-2">
+      <div class="fw-semibold text-truncate" style="min-width:0;">
+        <span class="text-primary" id="dispMapel"></span><span class="text-muted"> · </span><span id="dispNama"></span><span class="text-muted"> · </span><span id="dispKelas"></span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
         <span class="small text-muted" id="saveStatus"></span>
-        <span class="badge bg-danger fs-6 fw-semibold" id="pelanggaranCount">Pelanggaran: 0</span>
-        <span class="badge bg-warning text-dark fs-6 fw-semibold" id="timer">Sisa Waktu: --:--</span>
+        <span class="badge bg-danger fw-semibold" id="pelanggaranCount">Pelanggaran: 0</span>
+        <span class="badge bg-warning text-dark fw-bold" id="timer" style="font-size:.9rem;">Sisa Waktu: --:--</span>
       </div>
     </div>
 
     <div class="row g-4">
       <div class="col-md-4 col-lg-3">
-        <div class="card p-3 sticky-top" style="top:90px;">
+        <div class="card p-3 sticky-top nav-card">
           <h6 class="fw-bold text-primary mb-3">Navigasi Soal</h6>
           <div class="grid-nomor" id="gridNomor"></div>
           <hr class="my-3 border-secondary-subtle">
@@ -204,6 +220,10 @@
         </div>
       </div>
       <div class="col-md-8 col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h6 class="fw-bold text-primary mb-0">📝 Soal Ujian</h6>
+          <button type="button" class="btn btn-outline-primary btn-sm fw-bold" id="btnRefresh">🔄 Perbarui Soal</button>
+        </div>
         <div id="soal-container"></div>
         <div class="d-flex justify-content-between mt-3">
           <button class="btn btn-outline-secondary fw-bold" id="btnPrev">← Sebelumnya</button>
@@ -252,22 +272,27 @@
   // ==========================================================================
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1guSW_31VFmNQr9_sooItOxtTQ296Sbp73Q8Tf1oL_GLsP16dPGM5g9Zzhn-RamhT/exec";
   const PARAM_UJIAN = (new URLSearchParams(location.search).get("ujian") || "").trim().toLowerCase();
+  const INTERVAL_CEK_SOAL = 60000; // pemeriksaan pembaruan soal otomatis (ms)
 
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   const S = {
-    ujian: PARAM_UJIAN, info: null, token: null, soal: [], jawaban: {}, idx: 0,
+    ujian: PARAM_UJIAN, info: null, token: null, soal: [], jawaban: {}, idx: 0, versi: null,
     deadline: 0, pelanggaran: 0, maks: 5,
-    aktif: false, mengirim: false, dirty: false, menyimpan: false,
-    timer: null, saveTimer: null, lastViolation: 0, banyakUjian: false
+    aktif: false, mengirim: false, dirty: false, menyimpan: false, menyegarkan: false,
+    timer: null, saveTimer: null, cekTimer: null, lastViolation: 0, banyakUjian: false
   };
-  let modalObj = null;
+  let modalObj = null, toastTimer = null;
 
   // ---------- UI dasar ----------
   function tampilLoading(t) { $("loadingText").textContent = t || "Memuat…"; $("loading").style.display = "flex"; }
   function sembunyiLoading() { $("loading").style.display = "none"; }
+  function toast(teks) {
+    const t = $("toast"); t.textContent = teks; t.style.display = "block";
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.style.display = "none"; }, 3500);
+  }
 
   function tampilModal({ judul, isi, tombol }) {
     return new Promise((resolve) => {
@@ -298,6 +323,7 @@
       if (PARAM_UJIAN) await muatUjian(PARAM_UJIAN);
       else await muatDaftar();
       sembunyiLoading();
+      typeset(0); // render rumus pada header
     } catch (e) {
       sembunyiLoading();
       await tampilModal({ judul: "Gagal terhubung", isi: "Data kuis tidak dapat dimuat. Periksa koneksi internet Anda.<br><small class='text-muted'>" + esc(e.message) + "</small>", tombol: [{ label: "Coba Lagi", kelas: "btn-primary", nilai: true }] });
@@ -374,6 +400,7 @@
       "Kuis hanya dapat dikerjakan <strong>satu kali</strong>. Jawaban tersimpan otomatis dan terkirim sendiri saat waktu habis.",
       "Dilarang berpindah tab/aplikasi, membuka jendela lain, atau menggunakan AI. Setiap pelanggaran dicatat; pada <strong>" + i.maksPelanggaran + " pelanggaran</strong> kuis dikirim otomatis.",
       "Jika koneksi terputus atau halaman tertutup, masuk kembali dengan identitas yang sama untuk melanjutkan (dicatat sebagai 1 pelanggaran).",
+      "Jika guru memperbarui soal, gunakan tombol <strong>Perbarui Soal</strong> (soal juga diperiksa otomatis). Jawaban dan waktu Anda tidak terpengaruh.",
       "Klik kanan, salin, dan tempel dinonaktifkan. Urutan soal dan pilihan jawaban diacak untuk tiap siswa."
     ].map((t) => "<li>" + t + "</li>").join("");
 
@@ -414,15 +441,18 @@
   }
 
   async function mulaiSesi(res) {
-    S.token = res.token; S.soal = res.soal; S.jawaban = res.jawaban || {};
+    S.token = res.token; S.soal = res.soal; S.jawaban = res.jawaban || {}; S.versi = res.versi || null;
     S.pelanggaran = res.pelanggaran; S.deadline = Date.now() + res.sisaDetik * 1000;
-    $("dispNama").textContent = res.nama; $("dispKelas").textContent = res.kelas; $("dispAbsen").textContent = res.absen;
+    $("dispMapel").textContent = res.mapel || (S.info && S.info.mapel) || "";
+    $("dispNama").textContent = res.nama; $("dispKelas").textContent = res.kelas;
+    document.body.classList.add("mode-ujian");
     $("form-identitas").style.display = "none"; $("area-kuis").style.display = "block";
     $("pelanggaranCount").textContent = "Pelanggaran: " + S.pelanggaran + "/" + S.maks;
 
     renderSoal(); pulihkanJawaban(); pindahSoal(0);
     S.aktif = true; S.lastViolation = Date.now() + 2000;
     tick(); S.timer = setInterval(tick, 1000);
+    S.cekTimer = setInterval(() => { if (!document.hidden) segarkanSoal(false); }, INTERVAL_CEK_SOAL);
     window.scrollTo({ top: 0 });
 
     if (res.lanjut) {
@@ -535,6 +565,76 @@
     $("btnPrev").disabled = target === 0; $("btnNext").disabled = target === S.soal.length - 1;
   }
 
+  // ---------- Perbarui soal (tanpa logout, jawaban & waktu tetap) ----------
+  const samaStruktur = (a, b) => a.tipe === b.tipe &&
+    (a.opsi ? a.opsi.length : 0) === (b.opsi ? b.opsi.length : 0) &&
+    (a.poin ? a.poin.length : 0) === (b.poin ? b.poin.length : 0);
+
+  function terapkanSoalBaru(soalBaru) {
+    const lamaById = new Map(S.soal.map((s) => [s.id, s]));
+    const baruIds = new Set(soalBaru.map((s) => s.id));
+    const idAktif = S.soal[S.idx] ? S.soal[S.idx].id : null;
+    const scrollY = window.scrollY;
+    const berubahNo = [], dikosongkanNo = [];
+    let ditambah = 0;
+    const dihapus = [...lamaById.keys()].filter((id) => !baruIds.has(id)).length;
+
+    Object.keys(S.jawaban).forEach((k) => { if (!baruIds.has(+k)) delete S.jawaban[k]; });
+
+    soalBaru.forEach((sb, i) => {
+      const sl = lamaById.get(sb.id);
+      if (!sl) { ditambah++; berubahNo.push(i + 1); return; }
+      if (JSON.stringify(sl) !== JSON.stringify(sb)) {
+        berubahNo.push(i + 1);
+        if (!samaStruktur(sl, sb) && S.jawaban[sb.id] !== undefined) { delete S.jawaban[sb.id]; dikosongkanNo.push(i + 1); }
+      }
+    });
+
+    S.soal = soalBaru;
+    renderSoal(); pulihkanJawaban();
+    let idx = idAktif !== null ? S.soal.findIndex((s) => s.id === idAktif) : 0;
+    if (idx < 0) idx = Math.min(S.idx, S.soal.length - 1);
+    pindahSoal(Math.max(0, idx));
+    window.scrollTo({ top: scrollY });
+    if (dikosongkanNo.length || dihapus) tandaiPerubahan();
+
+    return { ada: berubahNo.length > 0 || dihapus > 0, berubahNo, dikosongkanNo, ditambah, dihapus };
+  }
+
+  async function segarkanSoal(manual) {
+    if (!S.aktif || S.mengirim || S.menyegarkan) return;
+    S.menyegarkan = true;
+    const btn = $("btnRefresh");
+    if (manual) { btn.disabled = true; btn.textContent = "⏳ Memeriksa…"; }
+    try {
+      const res = await api("soal", { token: S.token, versi: S.versi, paksa: !!manual });
+      if (res.status !== "OK") {
+        if (manual) await modalOk("Gagal memperbarui soal", esc(res.message || "Terjadi kesalahan di server."));
+        return;
+      }
+      if (res.selesai) return;
+      if (typeof res.sisaDetik === "number") S.deadline = Date.now() + res.sisaDetik * 1000;
+      if (!res.soal) return;                       // tidak ada perubahan (pemeriksaan otomatis)
+
+      if (!S.versi) { S.versi = res.versi; if (!manual) return; }   // versi awal belum diketahui
+      const berubahVersi = res.versi !== S.versi;
+      const r = terapkanSoalBaru(res.soal);
+      S.versi = res.versi;
+
+      if (!berubahVersi && !r.ada) { if (manual) toast("✓ Soal sudah yang terbaru"); return; }
+      let isi = "Guru memperbarui soal ujian. Jawaban dan sisa waktu Anda <strong>tidak berubah</strong>.";
+      if (r.berubahNo.length) isi += "<br><br>Nomor yang diperbarui: <strong>" + r.berubahNo.join(", ") + "</strong>.";
+      if (r.ditambah || r.dihapus) isi += "<br>" + (r.ditambah ? r.ditambah + " soal ditambahkan. " : "") + (r.dihapus ? r.dihapus + " soal dihapus. " : "") + "Nomor soal dapat bergeser.";
+      if (r.dikosongkanNo.length) isi += "<br><br><span class='text-danger'>Jawaban nomor <strong>" + r.dikosongkanNo.join(", ") + "</strong> dikosongkan karena bentuk soalnya berubah. Mohon dijawab ulang.</span>";
+      await modalOk("Soal diperbarui", isi);
+    } catch (e) {
+      if (manual) await modalOk("Koneksi bermasalah", "Tidak dapat memeriksa pembaruan soal. Jawaban Anda tetap aman. Coba lagi sesaat lagi.");
+    } finally {
+      S.menyegarkan = false;
+      btn.disabled = false; btn.textContent = "🔄 Perbarui Soal";
+    }
+  }
+
   // ---------- Simpan otomatis ----------
   function tandaiPerubahan() {
     S.dirty = true; $("saveStatus").textContent = "Belum tersimpan…";
@@ -608,8 +708,9 @@
   // ---------- Hasil ----------
   function tampilHasil(h) {
     S.aktif = false; S.mengirim = false;
-    clearInterval(S.timer); clearTimeout(S.saveTimer);
+    clearInterval(S.timer); clearInterval(S.cekTimer); clearTimeout(S.saveTimer);
     sembunyiLoading();
+    document.body.classList.remove("mode-ujian");
     $("area-kuis").style.display = "none"; $("form-identitas").style.display = "none"; $("area-hasil").style.display = "block";
     window.scrollTo({ top: 0 });
     if (S.info) $("resMapel").textContent = "Mata Pelajaran : " + S.info.mapel;
@@ -654,6 +755,7 @@
   $("btnKirim").addEventListener("click", konfirmasiKirim);
   $("btnPrev").addEventListener("click", () => pindahSoal(S.idx - 1));
   $("btnNext").addEventListener("click", () => pindahSoal(S.idx + 1));
+  $("btnRefresh").addEventListener("click", () => segarkanSoal(true));
   window.addEventListener("load", muatAwal);
 </script>
 </body>
