@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>TO TKA 2026</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <script>
     window.MathJax = {
@@ -14,11 +16,12 @@
       options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
     };
   </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 
   <style>
     * { font-family: 'Poppins', sans-serif; }
-    body { background-color: #f8fafc; color: #0f172a; user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+    body { background-color: #f8fafc; color: #0f172a; }
+    #area-kuis { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
     input, textarea, select { -webkit-user-select: text; user-select: text; }
     @media print { body { display: none !important; } }
 
@@ -54,6 +57,17 @@
     .card { background-color: #fff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,.05); color: #0f172a; }
     .form-select, .form-control { background-color: #fff; border: 1px solid #cbd5e1; color: #0f172a; font-weight: 500; }
     .form-select:focus, .form-control:focus { border-color: #0284c7; box-shadow: 0 0 0 .25rem rgba(2,132,199,.2); }
+    .form-control:disabled { background-color: #f1f5f9; }
+
+    /* Dropdown nama modern */
+    .combo { position: relative; }
+    .combo-panel { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 12px 32px rgba(15,23,42,.15); max-height: 260px; overflow-y: auto; z-index: 1040; display: none; padding: 6px; }
+    .combo-panel.open { display: block; }
+    .combo-item { padding: 9px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+    .combo-item.aktif, .combo-item:hover { background: #e0f2fe; }
+    .combo-item .avatar { width: 28px; height: 28px; border-radius: 50%; background: #bae6fd; color: #0369a1; font-size: .75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .combo-item mark { background: #fef08a; color: inherit; padding: 0; border-radius: 3px; }
+    .combo-empty { padding: 12px; color: #64748b; font-size: .9rem; text-align: center; }
 
     .option-box { display: flex; align-items: flex-start; gap: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: border-color .15s, background-color .15s; font-weight: 500; color: #0f172a; }
     .option-box:hover { background: #f1f5f9; border-color: #cbd5e1; }
@@ -69,6 +83,7 @@
     .loading-overlay { display: flex; justify-content: center; align-items: center; position: fixed; inset: 0; background: rgba(255,255,255,.95); z-index: 9999; }
     .warning-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; display: none; }
     .toast-mini { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #0f172a; color: #fff; padding: 10px 18px; border-radius: 12px; z-index: 1060; display: none; font-weight: 500; font-size: .9rem; box-shadow: 0 8px 24px rgba(15,23,42,.3); }
+    .fs-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(15,23,42,.96); color: #fff; align-items: center; justify-content: center; text-align: center; padding: 24px; flex-direction: column; gap: 14px; }
 
     .grid-nomor { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
     .btn-nomor { width: 100%; height: 40px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: all .2s ease; border: 1px solid transparent; }
@@ -93,7 +108,6 @@
 <body>
 
 <header class="hero-header">
-  <!-- Elemen Rumus & Ikon Sekolah Melayang -->
   <div class="math-symbol s1">📖</div>
   <div class="math-symbol s2">$$\int f(x)dx$$</div>
   <div class="math-symbol s3">$$E=mc^2$$</div>
@@ -120,7 +134,14 @@
   </div>
 </div>
 
-<!-- Modal serbaguna (menggantikan alert/confirm agar tidak memicu deteksi pelanggaran) -->
+<!-- Overlay saat keluar fullscreen -->
+<div id="fsOverlay" class="fs-overlay">
+  <div class="fs-3 fw-bold">⚠️ Anda keluar dari layar penuh</div>
+  <div>Pelanggaran telah dicatat. Kembali ke layar penuh untuk melanjutkan kuis. Waktu tetap berjalan.</div>
+  <button class="btn btn-warning fw-bold px-4" id="btnKembaliFs">Kembali ke Layar Penuh</button>
+</div>
+
+<!-- Modal serbaguna -->
 <div class="modal fade" id="modalUmum" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="border-radius:16px;">
@@ -155,8 +176,11 @@
         </div>
         <div class="col-md-8">
           <label class="form-label fw-bold" for="inputNama">Nama Lengkap</label>
-          <input class="form-control" list="listNama" id="inputNama" placeholder="Pilih kelas dulu, lalu ketik nama Anda…" autocomplete="off">
-          <datalist id="listNama"></datalist>
+          <div class="combo">
+            <input class="form-control" id="inputNama" placeholder="Pilih kelas dulu…" autocomplete="off" disabled
+                   role="combobox" aria-expanded="false" aria-controls="listNamaPanel">
+            <div class="combo-panel" id="listNamaPanel" role="listbox"></div>
+          </div>
         </div>
         <div class="col-md-4">
           <label class="form-label fw-bold" for="inputAbsen">Nomor Absen</label>
@@ -193,7 +217,6 @@
 
   <!-- AREA KUIS -->
   <div id="area-kuis" style="display:none;">
-    <!-- Header ringkas: hanya mapel, nama siswa, kelas (+ penanda waktu & pelanggaran) -->
     <div class="card sticky-top-bar sticky-top bar-ujian shadow-sm mb-3 d-flex flex-row flex-wrap justify-content-between align-items-center gap-2 px-3 py-2">
       <div class="fw-semibold text-truncate" style="min-width:0;">
         <span class="text-primary" id="dispMapel"></span><span class="text-muted"> · </span><span id="dispNama"></span><span class="text-muted"> · </span><span id="dispKelas"></span>
@@ -264,7 +287,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ==========================================================================
   //  KONFIGURASI — hanya URL Web App. Soal, kunci, durasi & penilaian ada di server.
@@ -272,7 +295,9 @@
   // ==========================================================================
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1guSW_31VFmNQr9_sooItOxtTQ296Sbp73Q8Tf1oL_GLsP16dPGM5g9Zzhn-RamhT/exec";
   const PARAM_UJIAN = (new URLSearchParams(location.search).get("ujian") || "").trim().toLowerCase();
-  const INTERVAL_CEK_SOAL = 60000; // pemeriksaan pembaruan soal otomatis (ms)
+  const INTERVAL_CEK_SOAL = 60000;   // dasar pemeriksaan pembaruan soal (ms), ditambah jitter acak
+  const TIMEOUT_REQUEST = 25000;     // batas waktu tiap request (ms)
+  const TOLERANSI_BLUR = 3000;       // kehilangan fokus > 3 detik baru dihitung pelanggaran
 
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -282,7 +307,8 @@
     ujian: PARAM_UJIAN, info: null, token: null, soal: [], jawaban: {}, idx: 0, versi: null,
     deadline: 0, pelanggaran: 0, maks: 5,
     aktif: false, mengirim: false, dirty: false, menyimpan: false, menyegarkan: false,
-    timer: null, saveTimer: null, cekTimer: null, lastViolation: 0, banyakUjian: false
+    timer: null, saveTimer: null, cekTimer: null, lastViolation: 0, banyakUjian: false,
+    fs: false, wl: null
   };
   let modalObj = null, toastTimer = null;
 
@@ -294,7 +320,8 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.style.display = "none"; }, 3500);
   }
 
-  function tampilModal({ judul, isi, tombol }) {
+  // Modal dengan antrean: dua dialog tidak akan saling menimpa
+  function tampilModalAsli({ judul, isi, tombol }) {
     return new Promise((resolve) => {
       if (!modalObj) modalObj = new bootstrap.Modal($("modalUmum"));
       $("mJudul").innerHTML = judul;
@@ -309,12 +336,24 @@
       modalObj.show();
     });
   }
+  let antrianModal = Promise.resolve();
+  function tampilModal(opts) {
+    const jalan = antrianModal.then(() => tampilModalAsli(opts));
+    antrianModal = jalan.catch(() => {});
+    return jalan;
+  }
   const modalOk = (judul, isi) => tampilModal({ judul, isi, tombol: [{ label: "Mengerti", kelas: "btn-primary", nilai: true }] });
 
-  function api(aksi, payload, opts) {
-    return fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi }, payload)), keepalive: !!(opts && opts.keepalive) }).then((r) => r.json());
+  // ---------- Jaringan (dengan timeout) ----------
+  function fetchTimeout(url, opts) {
+    const ac = new AbortController();
+    const to = setTimeout(() => ac.abort(), TIMEOUT_REQUEST);
+    return fetch(url, Object.assign({}, opts, { signal: ac.signal })).then((r) => r.json()).finally(() => clearTimeout(to));
   }
-  const getJson = (query) => fetch(SCRIPT_URL + "?" + query).then((r) => r.json());
+  function api(aksi, payload, opts) {
+    return fetchTimeout(SCRIPT_URL, { method: "POST", body: JSON.stringify(Object.assign({ aksi }, payload)), keepalive: !!(opts && opts.keepalive) });
+  }
+  const getJson = (query) => fetchTimeout(SCRIPT_URL + "?" + query);
 
   // ---------- Muat awal: daftar mapel atau satu mapel ----------
   async function muatAwal() {
@@ -323,7 +362,7 @@
       if (PARAM_UJIAN) await muatUjian(PARAM_UJIAN);
       else await muatDaftar();
       sembunyiLoading();
-      typeset(0); // render rumus pada header
+      typeset(0);
     } catch (e) {
       sembunyiLoading();
       await tampilModal({ judul: "Gagal terhubung", isi: "Data kuis tidak dapat dimuat. Periksa koneksi internet Anda.<br><small class='text-muted'>" + esc(e.message) + "</small>", tombol: [{ label: "Coba Lagi", kelas: "btn-primary", nilai: true }] });
@@ -368,7 +407,6 @@
     S.ujian = res.ujian; S.info = res; S.maks = res.maksPelanggaran;
     terapkanInfo(res);
     $("form-identitas").style.display = "block";
-    // Tampilkan tautan ganti mapel hanya jika ada lebih dari satu ujian
     try {
       const d = await getJson("action=daftarUjian");
       S.banyakUjian = (d.ujian || []).length > 1;
@@ -398,6 +436,7 @@
       "Nama harus <strong>terdaftar di database</strong> sekolah pada kelas yang dipilih.",
       "Kuis berisi <strong>" + i.jumlahSoal + " soal</strong> dengan waktu <strong>" + menit + " menit</strong>. Waktu dihitung oleh server; memuat ulang halaman <strong>tidak mengulang waktu</strong>.",
       "Kuis hanya dapat dikerjakan <strong>satu kali</strong>. Jawaban tersimpan otomatis dan terkirim sendiri saat waktu habis.",
+      "Sebelum mulai, aktifkan mode <strong>Jangan Ganggu</strong> dan tutup semua aplikasi lain. Kuis berjalan dalam <strong>layar penuh</strong>; keluar dari layar penuh dicatat sebagai pelanggaran.",
       "Dilarang berpindah tab/aplikasi, membuka jendela lain, atau menggunakan AI. Setiap pelanggaran dicatat; pada <strong>" + i.maksPelanggaran + " pelanggaran</strong> kuis dikirim otomatis.",
       "Jika koneksi terputus atau halaman tertutup, masuk kembali dengan identitas yang sama untuk melanjutkan (dicatat sebagai 1 pelanggaran).",
       "Jika guru memperbarui soal, gunakan tombol <strong>Perbarui Soal</strong> (soal juga diperiksa otomatis). Jawaban dan waktu Anda tidak terpengaruh.",
@@ -409,33 +448,111 @@
       "<tr class='fw-bold'><td class='text-start'>Total</td><td>" + i.jumlahSoal + "</td><td>–</td><td>" + Math.round(total) + "</td></tr>";
   }
 
+  // ---------- Dropdown nama (combobox) ----------
+  let daftarNama = [], comboHasil = [], comboIdx = -1, reqKelas = 0;
+  const inpNama = $("inputNama"), panelNama = $("listNamaPanel");
+
+  const bukaCombo = () => { panelNama.classList.add("open"); inpNama.setAttribute("aria-expanded", "true"); };
+  const tutupCombo = () => { panelNama.classList.remove("open"); inpNama.setAttribute("aria-expanded", "false"); comboIdx = -1; };
+
+  function renderCombo() {
+    const q = inpNama.value.trim().toLowerCase();
+    if (!daftarNama.length) { panelNama.innerHTML = "<div class='combo-empty'>Tidak ada data siswa untuk kelas ini.</div>"; comboHasil = []; return; }
+    comboHasil = daftarNama.filter((n) => n.toLowerCase().includes(q)).slice(0, 50);
+    comboIdx = q && comboHasil.length ? 0 : -1;
+    if (!comboHasil.length) { panelNama.innerHTML = "<div class='combo-empty'>Nama tidak ditemukan. Periksa ejaan Anda.</div>"; return; }
+    panelNama.innerHTML = comboHasil.map((n, i) => {
+      const p = q ? n.toLowerCase().indexOf(q) : -1;
+      const teks = p >= 0 ? esc(n.slice(0, p)) + "<mark>" + esc(n.slice(p, p + q.length)) + "</mark>" + esc(n.slice(p + q.length)) : esc(n);
+      return "<div class='combo-item" + (i === comboIdx ? " aktif" : "") + "' role='option' data-i='" + i + "'><span class='avatar'>" + esc(n.trim().charAt(0).toUpperCase()) + "</span><span>" + teks + "</span></div>";
+    }).join("");
+  }
+  function sorotCombo() {
+    const items = panelNama.querySelectorAll(".combo-item");
+    items.forEach((el, i) => el.classList.toggle("aktif", i === comboIdx));
+    if (items[comboIdx]) items[comboIdx].scrollIntoView({ block: "nearest" });
+  }
+  function pilihNama(n) { inpNama.value = n; tutupCombo(); $("inputAbsen").focus(); }
+
+  inpNama.addEventListener("focus", () => { if (daftarNama.length) { renderCombo(); bukaCombo(); } });
+  inpNama.addEventListener("input", () => { if (daftarNama.length) { renderCombo(); bukaCombo(); } });
+  inpNama.addEventListener("keydown", (e) => {
+    if (!panelNama.classList.contains("open")) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); comboIdx = Math.min(comboIdx + 1, comboHasil.length - 1); sorotCombo(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); comboIdx = Math.max(comboIdx - 1, 0); sorotCombo(); }
+    else if (e.key === "Enter" && comboIdx >= 0) { e.preventDefault(); pilihNama(comboHasil[comboIdx]); }
+    else if (e.key === "Escape") tutupCombo();
+  });
+  panelNama.addEventListener("mousedown", (e) => {
+    const it = e.target.closest(".combo-item"); if (!it) return;
+    e.preventDefault(); pilihNama(comboHasil[+it.dataset.i]);
+  });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".combo")) tutupCombo(); });
+
   $("inputKelas").addEventListener("change", async () => {
-    const k = $("inputKelas").value, dl = $("listNama");
-    dl.innerHTML = ""; $("inputNama").value = "";
-    if (!k) return;
+    const k = $("inputKelas").value, req = ++reqKelas;
+    daftarNama = []; inpNama.value = ""; tutupCombo();
+    inpNama.disabled = true;
+    if (!k) { inpNama.placeholder = "Pilih kelas dulu…"; return; }
+    inpNama.placeholder = "Memuat daftar siswa…";
     try {
       const res = await getJson("action=getNama&ujian=" + encodeURIComponent(S.ujian) + "&kelas=" + encodeURIComponent(k));
-      (res.nama || []).forEach((n) => { const o = document.createElement("option"); o.value = n; dl.appendChild(o); });
-    } catch (e) { /* saran nama bersifat opsional */ }
+      if (req !== reqKelas) return; // kelas sudah diganti, abaikan respons lama
+      daftarNama = (res.nama || []).slice().sort((a, b) => a.localeCompare(b, "id"));
+    } catch (e) { if (req === reqKelas) toast("Daftar nama gagal dimuat. Ketik nama secara manual."); }
+    if (req !== reqKelas) return;
+    inpNama.disabled = false;
+    inpNama.placeholder = daftarNama.length ? "Klik atau ketik nama Anda…" : "Ketik nama lengkap Anda…";
   });
+
+  // ---------- Fullscreen & mode fokus ----------
+  const adaFs = () => document.fullscreenElement || document.webkitFullscreenElement;
+  function masukFullscreen() {
+    const el = document.documentElement;
+    const fn = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (!fn) return Promise.resolve(false);           // contoh: iPhone Safari
+    try { return Promise.resolve(fn.call(el, { navigationUI: "hide" })).then(() => true).catch(() => false); }
+    catch (e) { return Promise.resolve(false); }
+  }
+  function keluarFullscreen() {
+    S.fs = false; $("fsOverlay").style.display = "none";
+    if (adaFs()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
+    if (navigator.keyboard && navigator.keyboard.unlock) { try { navigator.keyboard.unlock(); } catch (e) {} }
+    if (S.wl) { S.wl.release().catch(() => {}); S.wl = null; }
+  }
+  async function aktifkanModeFokus() {
+    try { if ("wakeLock" in navigator) { S.wl = await navigator.wakeLock.request("screen"); S.wl.addEventListener("release", () => { S.wl = null; }); } } catch (e) {}
+    try { if (S.fs && navigator.keyboard && navigator.keyboard.lock) await navigator.keyboard.lock(["Escape"]); } catch (e) {}
+  }
+  function onFsChange() {
+    if (!S.aktif || !S.fs) return;
+    if (!adaFs()) { laporPelanggaran("KELUAR_FULLSCREEN"); $("fsOverlay").style.display = "flex"; }
+    else $("fsOverlay").style.display = "none";
+  }
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+  $("btnKembaliFs").addEventListener("click", () => masukFullscreen());
 
   // ---------- Memulai kuis ----------
   async function mulaiKuis() {
     const nama = $("inputNama").value.trim(), kelas = $("inputKelas").value, absen = $("inputAbsen").value.trim(), kode = $("inputKode").value.trim();
     if (!nama || !kelas || !absen) { await modalOk("Data belum lengkap", "Isi kelas, nama, dan nomor absen terlebih dahulu."); return; }
 
+    const fsP = masukFullscreen();   // HARUS dipanggil langsung dari klik, sebelum await lain
     tampilLoading("Memverifikasi data dan menyiapkan soal…");
     try {
       const res = await api("mulai", { ujian: S.ujian, nama, kelas, absen, kode });
       sembunyiLoading();
       if (res.status === "SELESAI") {
+        keluarFullscreen();
         await modalOk("Sesi Anda telah berakhir", "Waktu habis atau batas pelanggaran tercapai saat Anda keluar dari halaman. Jawaban yang tersimpan sudah dinilai.");
         tampilHasil(res.hasil); return;
       }
-      if (res.status !== "OK") { await modalOk("Tidak dapat memulai", esc(res.message || "Terjadi kesalahan.")); return; }
+      if (res.status !== "OK") { keluarFullscreen(); await modalOk("Tidak dapat memulai", esc(res.message || "Terjadi kesalahan.")); return; }
+      S.fs = await fsP;               // true hanya jika fullscreen benar-benar aktif
       await mulaiSesi(res);
     } catch (e) {
-      sembunyiLoading();
+      sembunyiLoading(); keluarFullscreen();
       await modalOk("Koneksi bermasalah", "Permintaan tidak sampai ke server. Periksa internet Anda lalu coba lagi.");
     }
   }
@@ -451,13 +568,24 @@
 
     renderSoal(); pulihkanJawaban(); pindahSoal(0);
     S.aktif = true; S.lastViolation = Date.now() + 2000;
+    aktifkanModeFokus();
     tick(); S.timer = setInterval(tick, 1000);
-    S.cekTimer = setInterval(() => { if (!document.hidden) segarkanSoal(false); }, INTERVAL_CEK_SOAL);
+    jadwalCekSoal();
     window.scrollTo({ top: 0 });
 
     if (res.lanjut) {
       await modalOk("Sesi dilanjutkan", "Jawaban terakhir yang tersimpan telah dipulihkan. Waktu tetap berjalan sejak mulai pertama, dan memuat ulang halaman dicatat sebagai 1 pelanggaran.");
     }
+  }
+
+  // Pemeriksaan soal otomatis dengan jitter agar request siswa tidak serentak
+  function jadwalCekSoal() {
+    clearTimeout(S.cekTimer);
+    S.cekTimer = setTimeout(async () => {
+      if (!S.aktif) return;
+      if (!document.hidden) await segarkanSoal(false);
+      if (S.aktif) jadwalCekSoal();
+    }, INTERVAL_CEK_SOAL + Math.random() * 20000);
   }
 
   // ---------- Timer (mengikuti waktu server) ----------
@@ -571,18 +699,18 @@
     (a.poin ? a.poin.length : 0) === (b.poin ? b.poin.length : 0);
 
   function terapkanSoalBaru(soalBaru) {
-    const lamaById = new Map(S.soal.map((s) => [s.id, s]));
-    const baruIds = new Set(soalBaru.map((s) => s.id));
-    const idAktif = S.soal[S.idx] ? S.soal[S.idx].id : null;
+    const lamaById = new Map(S.soal.map((s) => [String(s.id), s]));
+    const baruIds = new Set(soalBaru.map((s) => String(s.id)));
+    const idAktif = S.soal[S.idx] ? String(S.soal[S.idx].id) : null;
     const scrollY = window.scrollY;
     const berubahNo = [], dikosongkanNo = [];
     let ditambah = 0;
     const dihapus = [...lamaById.keys()].filter((id) => !baruIds.has(id)).length;
 
-    Object.keys(S.jawaban).forEach((k) => { if (!baruIds.has(+k)) delete S.jawaban[k]; });
+    Object.keys(S.jawaban).forEach((k) => { if (!baruIds.has(String(k))) delete S.jawaban[k]; });
 
     soalBaru.forEach((sb, i) => {
-      const sl = lamaById.get(sb.id);
+      const sl = lamaById.get(String(sb.id));
       if (!sl) { ditambah++; berubahNo.push(i + 1); return; }
       if (JSON.stringify(sl) !== JSON.stringify(sb)) {
         berubahNo.push(i + 1);
@@ -592,7 +720,7 @@
 
     S.soal = soalBaru;
     renderSoal(); pulihkanJawaban();
-    let idx = idAktif !== null ? S.soal.findIndex((s) => s.id === idAktif) : 0;
+    let idx = idAktif !== null ? S.soal.findIndex((s) => String(s.id) === idAktif) : 0;
     if (idx < 0) idx = Math.min(S.idx, S.soal.length - 1);
     pindahSoal(Math.max(0, idx));
     window.scrollTo({ top: scrollY });
@@ -616,7 +744,7 @@
       if (typeof res.sisaDetik === "number") S.deadline = Date.now() + res.sisaDetik * 1000;
       if (!res.soal) return;                       // tidak ada perubahan (pemeriksaan otomatis)
 
-      if (!S.versi) { S.versi = res.versi; if (!manual) return; }   // versi awal belum diketahui
+      if (!S.versi) { S.versi = res.versi; if (!manual) return; }
       const berubahVersi = res.versi !== S.versi;
       const r = terapkanSoalBaru(res.soal);
       S.versi = res.versi;
@@ -673,8 +801,18 @@
       if (res.selesai && res.hasil) tampilHasil(res.hasil);
     }).catch(() => {});
   }
-  document.addEventListener("visibilitychange", () => { if (document.hidden) { laporPelanggaran("PINDAH_TAB"); simpanSekarang(); } });
-  window.addEventListener("blur", () => { setTimeout(() => { if (!document.hidden) laporPelanggaran("KEHILANGAN_FOKUS"); }, 50); });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) { laporPelanggaran("PINDAH_TAB"); simpanSekarang(); }
+    else if (S.aktif && !S.wl && "wakeLock" in navigator) aktifkanModeFokus();
+  });
+
+  // Notifikasi sering memicu blur sesaat; hanya hitung bila fokus hilang > 3 detik
+  let blurTimer = null;
+  window.addEventListener("blur", () => {
+    clearTimeout(blurTimer);
+    blurTimer = setTimeout(() => { if (!document.hidden && !document.hasFocus()) laporPelanggaran("KEHILANGAN_FOKUS"); }, TOLERANSI_BLUR);
+  });
+  window.addEventListener("focus", () => clearTimeout(blurTimer));
 
   // ---------- Pengiriman ----------
   async function konfirmasiKirim() {
@@ -700,15 +838,18 @@
         return;
       } catch (e) { await sleep(2000 * (i + 1)); }
     }
-    sembunyiLoading(); S.mengirim = false;
+    // S.mengirim tetap true selama dialog terbuka agar timer tidak memicu kirim ganda
+    sembunyiLoading();
     await tampilModal({ judul: "Pengiriman gagal", isi: "Jawaban belum terkirim karena koneksi bermasalah. <strong>Jangan tutup halaman ini.</strong> Pastikan internet aktif lalu kirim ulang.", tombol: [{ label: "Kirim Ulang", kelas: "btn-primary", nilai: true }] });
+    S.mengirim = false;
     kirimJawaban(otomatis);
   }
 
   // ---------- Hasil ----------
   function tampilHasil(h) {
+    keluarFullscreen();
     S.aktif = false; S.mengirim = false;
-    clearInterval(S.timer); clearInterval(S.cekTimer); clearTimeout(S.saveTimer);
+    clearInterval(S.timer); clearTimeout(S.cekTimer); clearTimeout(S.saveTimer); clearTimeout(blurTimer);
     sembunyiLoading();
     document.body.classList.remove("mode-ujian");
     $("area-kuis").style.display = "none"; $("form-identitas").style.display = "none"; $("area-hasil").style.display = "block";
@@ -730,6 +871,7 @@
     $("hasilStatus").textContent = status;
 
     if (h.tampilkanSkor && typeof h.skor === "number") {
+      $("hasilCatatan").textContent = "Jawaban Anda telah tersimpan di rekapitulasi guru.";
       $("blokSkor").style.display = ""; $("blokRincian").style.display = "";
       $("resSkor").textContent = h.skor;
       $("resBenar").textContent = h.jumlahSempurna + " / " + h.totalSoal;
