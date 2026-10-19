@@ -180,7 +180,7 @@
 <!-- Overlay saat keluar fullscreen -->
 <div id="fsOverlay" class="fs-overlay">
   <div class="fs-3 fw-bold">⚠️ Anda keluar dari layar penuh</div>
-  <div>Pelanggaran telah dicatat. Kembali ke layar penuh untuk melanjutkan kuis. Waktu tetap berjalan.</div>
+  <div>Pelanggaran telah dicatat. Kembali ke layar penuh untuk melanjutkan ujian. Waktu tetap berjalan.</div>
   <button class="btn btn-warning fw-bold px-4" id="btnKembaliFs">Kembali ke Layar Penuh</button>
 </div>
 
@@ -236,10 +236,10 @@
       </div>
 
       <div class="alert alert-warning border-0 bg-warning bg-opacity-10 text-dark mt-4 mb-0" role="alert">
-        <strong>⚠️ Aturan &amp; Sistem Keamanan Kuis</strong>
+        <strong>⚠️ Aturan &amp; Sistem Keamanan Ujian</strong>
         <ul class="mb-0 ps-3 mt-1 small rule-list" id="daftarAturan"></ul>
       </div>
-      <button class="btn btn-primary text-white mt-4 w-100 py-2 fw-bold fs-5 shadow-sm" id="btnMulai">Mulai Kerjakan Kuis 🚀</button>
+      <button class="btn btn-primary text-white mt-4 w-100 py-2 fw-bold fs-5 shadow-sm" id="btnMulai">Mulai Kerjakan Ujian 🚀</button>
     </div>
 
     <div class="card p-4">
@@ -307,7 +307,7 @@
   <!-- HASIL -->
   <div id="area-hasil" style="display:none;">
     <div class="card p-4 text-center mb-4">
-      <h3 class="fw-bold text-success mb-2" id="judulHasil">🎉 Kuis Selesai!</h3>
+      <h3 class="fw-bold text-success mb-2" id="judulHasil">🎉 Ujian Selesai!</h3>
       <p class="fw-semibold text-primary mb-1" id="resMapel"></p>
       <p class="text-secondary mb-1" id="hasilCatatan">Jawaban Anda telah tersimpan di rekapitulasi guru.</p>
       <p class="small fw-semibold text-danger mb-3" id="hasilStatus"></p>
@@ -413,7 +413,7 @@
       typeset(0);
     } catch (e) {
       sembunyiLoading();
-      await tampilModal({ judul: "Gagal terhubung", isi: "Data kuis tidak dapat dimuat. Periksa koneksi internet Anda.<br><small class='text-muted'>" + esc(e.message) + "</small>", tombol: [{ label: "Coba Lagi", kelas: "btn-primary", nilai: true }] });
+      await tampilModal({ judul: "Gagal terhubung", isi: "Data Ujian tidak dapat dimuat. Periksa koneksi internet Anda.<br><small class='text-muted'>" + esc(e.message) + "</small>", tombol: [{ label: "Coba Lagi", kelas: "btn-primary", nilai: true }] });
       muatAwal();
     }
   }
@@ -482,10 +482,10 @@
     const menit = Math.round(i.waktu / 60);
     $("daftarAturan").innerHTML = [
       "Nama harus <strong>terdaftar di database</strong> sekolah pada kelas yang dipilih.",
-      "Kuis berisi <strong>" + i.jumlahSoal + " soal</strong> dengan waktu <strong>" + menit + " menit</strong>. Waktu dihitung oleh server; memuat ulang halaman <strong>tidak mengulang waktu</strong>.",
-      "Kuis hanya dapat dikerjakan <strong>satu kali</strong>. Jawaban tersimpan otomatis dan terkirim sendiri saat waktu habis.",
-      "Sebelum mulai, aktifkan mode <strong>Jangan Ganggu</strong> dan tutup semua aplikasi lain. Kuis berjalan dalam <strong>layar penuh</strong>; keluar dari layar penuh dicatat sebagai pelanggaran.",
-      "Dilarang berpindah tab/aplikasi, membuka jendela lain, atau menggunakan AI. Setiap pelanggaran dicatat; pada <strong>" + i.maksPelanggaran + " pelanggaran</strong> kuis dikirim otomatis.",
+      "Ujian berisi <strong>" + i.jumlahSoal + " soal</strong> dengan waktu <strong>" + menit + " menit</strong>. Waktu dihitung oleh server; memuat ulang halaman <strong>tidak mengulang waktu</strong>.",
+      "Ujian hanya dapat dikerjakan <strong>satu kali</strong>. Jawaban tersimpan otomatis dan terkirim sendiri saat waktu habis.",
+      "Sebelum mulai, aktifkan mode <strong>Jangan Ganggu</strong> dan tutup semua aplikasi lain. Ujian berjalan dalam <strong>layar penuh</strong>; keluar dari layar penuh dicatat sebagai pelanggaran.",
+      "Dilarang berpindah tab/aplikasi, membuka jendela lain, atau menggunakan AI. Setiap pelanggaran dicatat; pada <strong>" + i.maksPelanggaran + " pelanggaran</strong> Ujian dikirim otomatis.",
       "Jika koneksi terputus atau halaman tertutup, masuk kembali dengan identitas yang sama untuk melanjutkan (dicatat sebagai 1 pelanggaran).",
       "Jika guru memperbarui soal, gunakan tombol <strong>Perbarui Soal</strong> (soal juga diperiksa otomatis). Jawaban dan waktu Anda tidak terpengaruh.",
       "Klik kanan, salin, dan tempel dinonaktifkan. Urutan soal dan pilihan jawaban diacak untuk tiap siswa."
@@ -581,7 +581,7 @@
   document.addEventListener("webkitfullscreenchange", onFsChange);
   $("btnKembaliFs").addEventListener("click", () => masukFullscreen());
 
-  // ---------- Memulai kuis ----------
+  // ---------- Memulai ujian ----------
   async function mulaiKuis() {
     const nama = $("inputNama").value.trim(), kelas = $("inputKelas").value, absen = $("inputAbsen").value.trim(), kode = $("inputKode").value.trim();
     if (!nama || !kelas || !absen) { await modalOk("Data belum lengkap", "Isi kelas, nama, dan nomor absen terlebih dahulu."); return; }
@@ -843,7 +843,7 @@
     S.pelanggaran++;
     $("pelanggaranCount").textContent = "Pelanggaran: " + S.pelanggaran + "/" + S.maks;
     const b = $("warningBanner");
-    b.textContent = "⚠️ PERINGATAN: Anda meninggalkan halaman kuis! Pelanggaran " + S.pelanggaran + " dari " + S.maks + " telah dicatat. Pada batas maksimum, kuis dikirim otomatis.";
+    b.textContent = "⚠️ PERINGATAN: Anda meninggalkan halaman Ujian! Pelanggaran " + S.pelanggaran + " dari " + S.maks + " telah dicatat. Pada batas maksimum, Ujian dikirim otomatis.";
     b.style.display = "block"; setTimeout(() => { b.style.display = "none"; }, 5000);
 
     api("catat", { token: S.token, jenis, jawaban: S.jawaban }, { keepalive: true }).then((res) => {
@@ -931,7 +931,7 @@
     } else {
       $("blokSkor").style.display = "none"; $("blokRincian").style.display = "none";
       $("resBenar").textContent = "–";
-      $("judulHasil").textContent = "🎉 Kuis Selesai!"; setTimeout(confettiBesar, 300);
+      $("judulHasil").textContent = "🎉 Ujian Selesai!"; setTimeout(confettiBesar, 300);
       $("hasilCatatan").textContent = "Jawaban Anda telah tersimpan. Nilai akan diumumkan oleh guru.";
     }
   }
