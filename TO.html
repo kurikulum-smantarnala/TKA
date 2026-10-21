@@ -2,7 +2,7 @@
 <html lang="id" translate="no" class="notranslate">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="google" content="notranslate">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,9 +21,9 @@
 
   <style>
     :root { --indigo:#4f46e5; --violet:#7c3aed; --sky:#0ea5e9; --amber:#fbbf24; --pink:#ec4899; --mint:#10b981; --line:#e0e7ff; }
-    * { font-family: 'Poppins', sans-serif; }
+    * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
     h1,h2,h3,h4,h5,h6,.main-title,.skor-besar { font-family: 'Baloo 2','Poppins',sans-serif; }
-    body { background: linear-gradient(160deg,#eef2ff 0%,#fdf4ff 45%,#ecfeff 100%) fixed; color: #0f172a; }
+    body { background: linear-gradient(160deg,#eef2ff 0%,#fdf4ff 45%,#ecfeff 100%) fixed; color: #0f172a; overflow-x: hidden; }
     body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
       background-image: linear-gradient(rgba(79,70,229,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(79,70,229,.07) 1px,transparent 1px);
       background-size: 32px 32px; -webkit-mask-image: radial-gradient(ellipse at center,#000 35%,transparent 100%); mask-image: radial-gradient(ellipse at center,#000 35%,transparent 100%); }
@@ -31,40 +31,53 @@
     input, textarea, select { -webkit-user-select: text; user-select: text; }
     @media print { body { display: none !important; } }
 
-    /* ===== Hero ===== */
-    .hero-header { position: relative; width: 100%; min-height: 44vh; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; padding: 2.5rem 1.5rem 5rem;
+    /* ===== Hero Header ===== */
+    .hero-header { position: relative; width: 100%; min-height: 44vh; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; padding: clamp(1.8rem, 4vw, 2.5rem) 1.5rem clamp(3.5rem, 6vw, 5rem);
       background: radial-gradient(circle at 20% 20%,rgba(255,255,255,.14) 0 2px,transparent 3px) 0 0/28px 28px, linear-gradient(135deg,#312e81 0%,#4f46e5 42%,#7c3aed 72%,#db2777 100%); }
     .blob { position: absolute; border-radius: 50%; filter: blur(46px); opacity: .55; animation: drift 14s ease-in-out infinite; pointer-events: none; }
     .b1 { width: 280px; height: 280px; background: #fbbf24; top: -90px; left: -60px; }
     .b2 { width: 320px; height: 320px; background: #0ea5e9; bottom: -140px; right: -80px; animation-delay: 3s; }
     .b3 { width: 200px; height: 200px; background: #ec4899; top: 30%; left: 55%; animation-delay: 6s; opacity: .35; }
     @keyframes drift { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-24px) scale(1.12); } }
-    .float-ico { position: absolute; font-size: 2.5rem; pointer-events: none; transform: translate(var(--px,0),var(--py,0)); transition: transform .25s ease-out; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
+    .float-ico { position: absolute; font-size: clamp(1.8rem, 3vw, 2.5rem); pointer-events: none; transform: translate(var(--px,0),var(--py,0)); transition: transform .25s ease-out; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
     .float-ico > span { display: inline-block; animation: float 6s ease-in-out infinite; }
     .float-ico:nth-child(even) > span { animation-delay: 2s; animation-duration: 7s; }
-    .float-ico.math-symbol { font-size: 1.7rem; font-weight: 800; color: rgba(255,255,255,.38); filter: none; }
+    .float-ico.math-symbol { font-size: clamp(1.2rem, 2vw, 1.7rem); font-weight: 800; color: rgba(255,255,255,.38); filter: none; }
     .math-symbol mjx-container { margin: 0 !important; }
     @keyframes float { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-16px) rotate(8deg); } }
-    @media (max-width: 575px) { .float-ico:nth-child(n+7) { display: none; } .float-ico { font-size: 1.8rem; } }
+    @media (max-width: 575.98px) { .float-ico:nth-child(n+7) { display: none; } }
     .wave { position: absolute; left: 0; bottom: -1px; width: 100%; height: 56px; display: block; }
 
-    .header-content { position: relative; z-index: 10; }
-    .hero-badge { display: inline-block; background: rgba(255,255,255,.18); color: #fff; padding: 6px 18px; border-radius: 50px; font-size: .85rem; font-weight: 600; margin: 0 4px 12px; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.35); cursor: pointer; transition: transform .2s, background .2s; }
+    .header-content { position: relative; z-index: 10; max-width: 1200px; width: 100%; }
+    .hero-badge { display: inline-block; background: rgba(255,255,255,.18); color: #fff; padding: 6px 18px; border-radius: 50px; font-size: clamp(0.75rem, 2vw, 0.85rem); font-weight: 600; margin: 0 4px 12px; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.35); cursor: pointer; transition: transform .2s, background .2s; }
     .hero-badge:hover { transform: translateY(-3px) rotate(-1.5deg); background: rgba(255,255,255,.3); }
-    .main-title { font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 8px; text-shadow: 0 4px 0 rgba(30,27,75,.35); }
-    .sub-title { font-size: clamp(1.1rem,2.5vw,1.5rem); font-weight: 600; color: #e0e7ff; margin-bottom: 14px; }
+    .main-title { font-size: clamp(1.8rem,5vw,3.6rem); font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 8px; text-shadow: 0 4px 0 rgba(30,27,75,.35); }
+    .sub-title { font-size: clamp(1rem,2.5vw,1.5rem); font-weight: 600; color: #e0e7ff; margin-bottom: 14px; }
     .highlight { color: #fde047; font-weight: 800; background: linear-gradient(transparent 62%,rgba(236,72,153,.55) 62%); padding: 0 6px; }
-    .mapel-pill { display: inline-block; background: #fff; color: #3730a3; padding: 8px 24px; border-radius: 14px; font-weight: 500; font-size: 1.05rem; margin-bottom: 12px; box-shadow: 0 5px 0 #fbbf24, 0 12px 24px rgba(15,23,42,.2); transform: rotate(-1deg); }
+    .mapel-pill { display: inline-block; background: #fff; color: #3730a3; padding: 8px 24px; border-radius: 14px; font-weight: 500; font-size: clamp(0.9rem, 2vw, 1.05rem); margin-bottom: 12px; box-shadow: 0 5px 0 #fbbf24, 0 12px 24px rgba(15,23,42,.2); transform: rotate(-1deg); }
     .mapel-pill strong { font-weight: 700; }
-    .motto { color: #fef9c3; font-weight: 500; font-size: 1rem; min-height: 1.6em; margin: 6px 0 4px; transition: opacity .35s; }
+    .motto { color: #fef9c3; font-weight: 500; font-size: clamp(0.85rem, 2vw, 1rem); min-height: 1.6em; margin: 6px 0 4px; transition: opacity .35s; opacity: 1; }
     .materi-line { color: #c7d2fe; font-size: .9rem; margin: 0; }
 
     body.mode-ujian .hero-header { display: none; }
     body.mode-ujian #kontainer { margin-top: 12px !important; margin-bottom: 24px !important; }
-    .bar-ujian { top: 8px; z-index: 1000; border-radius: 16px; }
-    .nav-card { top: 72px; }
 
-    /* ===== Kartu & form ===== */
+    /* ===== OPTIMASI LEBAR KONTAINER UNTUK LAYAR PC ===== */
+    #kontainer { 
+      padding-left: clamp(0.75rem, 3vw, 1.5rem); 
+      padding-right: clamp(0.75rem, 3vw, 1.5rem); 
+      max-width: 100%;
+    }
+    @media (min-width: 992px) {
+      #kontainer {
+        max-width: 1380px !important; /* Diperlebar khusus PC agar presisi memenuhi layar */
+      }
+    }
+
+    .sticky-top-bar { top: 8px; z-index: 1000; border-radius: 16px; background-color: rgba(255,255,255,.92); backdrop-filter: blur(10px); border: 2px solid var(--line); }
+    .nav-card { top: 80px; width: 100%; box-sizing: border-box; }
+
+    /* ===== Kartu & Form ===== */
     .card { background-color: #fff; border-radius: 20px; border: 2px solid var(--line); box-shadow: 0 10px 30px rgba(79,70,229,.08); color: #0f172a; }
     #form-identitas > .card:first-child { border-top: 8px solid var(--indigo); }
     .form-select, .form-control { background-color: #fff; border: 2px solid #c7d2fe; border-radius: 12px; color: #0f172a; font-weight: 500; padding: .6rem .9rem; transition: border-color .15s, transform .15s, box-shadow .15s; }
@@ -92,52 +105,79 @@
     .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,.5); transform: scale(0); animation: ripple .6s linear; pointer-events: none; }
     @keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
 
-    /* ===== Soal ===== */
-    .option-box { display: flex; align-items: flex-start; gap: 12px; background: #fafaff; border: 2px solid var(--line); border-radius: 14px; padding: 13px 16px; margin-bottom: 10px; cursor: pointer; transition: transform .15s, border-color .15s, background-color .15s, box-shadow .15s; font-weight: 500; color: #0f172a; }
-    .option-box:hover { background: #eef2ff; border-color: #a5b4fc; transform: translateX(5px); }
+    /* ===== Soal & Opsi ===== */
+    .option-box { display: flex; align-items: flex-start; gap: 12px; background: #fafaff; border: 2px solid var(--line); border-radius: 14px; padding: 14px 18px; margin-bottom: 12px; cursor: pointer; transition: transform .15s, border-color .15s, background-color .15s, box-shadow .15s; font-weight: 500; color: #0f172a; font-size: clamp(0.92rem, 1.5vw, 1.05rem); }
+    .option-box:hover { background: #eef2ff; border-color: #a5b4fc; transform: translateX(4px); }
     .option-box:has(input:checked) { background: linear-gradient(135deg,#e0e7ff,#fae8ff); border-color: var(--indigo); box-shadow: 0 4px 14px rgba(79,70,229,.2); animation: pop .3s ease; }
-    .option-box input { margin-top: .3rem; flex-shrink: 0; }
-    .opt-letter { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #e0e7ff; color: #4338ca; font-weight: 700; font-size: .85rem; margin-right: 8px; transition: background .15s, color .15s; }
+    .option-box input { margin-top: .35rem; flex-shrink: 0; }
+    .option-box > span { display: flex; align-items: flex-start; gap: 6px; flex: 1; word-break: break-word; }
+    .opt-letter { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #e0e7ff; color: #4338ca; font-weight: 700; font-size: .88rem; flex-shrink: 0; transition: background .15s, color .15s; }
     .option-box:has(input:checked) .opt-letter { background: var(--indigo); color: #fff; }
     .soal-text img, .option-box img { max-width: 100%; height: auto; border-radius: 10px; display: block; margin: 8px 0; -webkit-user-drag: none; pointer-events: none; }
     .soal-card { display: none; border-left: 8px solid var(--violet); }
     .soal-card.active { display: block; animation: slideIn .35s ease; }
+    .soal-text { font-size: clamp(1.02rem, 1.8vw, 1.15rem); font-weight: 500; color: #0f172a; line-height: 1.6; }
     @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     @keyframes pop { 0% { transform: scale(.97); } 60% { transform: scale(1.015); } 100% { transform: scale(1); } }
 
     .table { color: #0f172a !important; border-color: #c7d2fe !important; }
     .table td, .table th { color: #0f172a !important; background-color: #fff !important; }
     .table th { background-color: #eef2ff !important; color: #3730a3 !important; }
-    .badge-diff { font-size: .8rem; padding: .45em .9em; font-weight: 600; border-radius: 50px; background: linear-gradient(135deg,#f59e0b,#ec4899) !important; }
-    .footer {
-        text-align: center;
-        padding: 20px;
-        background-color: #f1f1f1; /* Opsional: warna latar */
-      }
+    .badge-diff { font-size: .85rem; padding: .45em .9em; font-weight: 600; border-radius: 50px; background: linear-gradient(135deg,#f59e0b,#ec4899) !important; }
+    
+    .footer { text-align: center; padding: 20px; }
     .loading-overlay { display: flex; justify-content: center; align-items: center; position: fixed; inset: 0; background: rgba(238,242,255,.96); z-index: 9999; }
     .warning-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; display: none; }
-    .toast-mini { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: linear-gradient(135deg,#312e81,#6d28d9); color: #fff; padding: 12px 22px; border-radius: 50px; z-index: 10002; display: none; font-weight: 600; font-size: .92rem; box-shadow: 0 10px 28px rgba(49,46,129,.4); animation: pop .3s ease; }
+    .toast-mini { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: linear-gradient(135deg,#312e81,#6d28d9); color: #fff; padding: 12px 22px; border-radius: 50px; z-index: 10002; display: none; font-weight: 600; font-size: .92rem; box-shadow: 0 10px 28px rgba(49,46,129,.4); animation: pop .3s ease; text-align: center; max-width: 90vw; }
     .fs-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(30,27,75,.96); color: #fff; align-items: center; justify-content: center; text-align: center; padding: 24px; flex-direction: column; gap: 14px; }
 
-    /* ===== Navigasi & progres ===== */
-    .grid-nomor { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
-    .btn-nomor { width: 100%; height: 42px; font-weight: 700; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: .9rem; transition: all .2s ease; border: 2px solid transparent; }
+    /* ===== Grid Nomor Soal (Kompatibel PC & HP) ===== */
+    .grid-nomor { 
+      display: grid; 
+      grid-template-columns: repeat(5, minmax(0, 1fr)); 
+      gap: 6px; 
+      max-height: 320px; 
+      overflow-y: auto; 
+      overflow-x: hidden;
+      padding: 2px 4px 2px 2px;
+      width: 100%;
+    }
+    .btn-nomor { 
+      width: 100%; 
+      aspect-ratio: 1 / 1;
+      height: auto; 
+      min-height: 34px;
+      font-weight: 700; 
+      border-radius: 10px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: .85rem; 
+      transition: all .2s ease; 
+      border: 2px solid transparent; 
+      padding: 0;
+    }
     .btn-nomor:hover { transform: translateY(-2px); }
     .btn-nomor.belum { background-color: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
     .btn-nomor.dijawab { background: linear-gradient(135deg,#10b981,#0ea5e9); color: #fff; border-color: transparent; animation: pop .35s ease; }
-    .btn-nomor.active { border: 2px solid var(--indigo); box-shadow: 0 0 0 4px rgba(79,70,229,.25); transform: scale(1.08); }
+    .btn-nomor.active { border: 2px solid var(--indigo); box-shadow: 0 0 0 3px rgba(79,70,229,.25); transform: scale(1.04); }
     .btn-nomor.belum.active { background-color: #e0e7ff; color: #3730a3; }
+    
+    @media (max-width: 767.98px) {
+      .grid-nomor { grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); max-height: 180px; }
+      .btn-nomor { height: 38px; aspect-ratio: auto; }
+      .nav-card { position: relative !important; top: 0 !important; }
+    }
+
     .legend-dot { display: inline-block; width: 14px; height: 14px; border-radius: 5px; vertical-align: middle; margin-right: 8px; }
     .legend-dot.ok { background: linear-gradient(135deg,#10b981,#0ea5e9); } .legend-dot.no { background: #f1f5f9; border: 1px solid #cbd5e1; } .legend-dot.now { background: #e0e7ff; border: 2px solid var(--indigo); }
     .prog-wrap { height: 16px; border-radius: 99px; background: #e0e7ff; overflow: hidden; box-shadow: inset 0 2px 4px rgba(79,70,229,.15); }
     #progBar { height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg,#10b981,#0ea5e9,#8b5cf6,#10b981); background-size: 200% 100%; transition: width .6s cubic-bezier(.34,1.56,.64,1); animation: shimmer 3s linear infinite; }
     @keyframes shimmer { to { background-position: 200% 0; } }
 
-    .sticky-top-bar { background-color: rgba(255,255,255,.92); backdrop-filter: blur(10px); border: 2px solid var(--line); }
-    .soal-text { font-size: 1.1rem; font-weight: 500; color: #0f172a; line-height: 1.6; }
     .timer-danger { background-color: #dc2626 !important; color: #fff !important; animation: denyut 1s ease-in-out infinite; }
     @keyframes denyut { 50% { transform: scale(1.08); } }
-    .skor-besar { font-size: 4.5rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg,#4f46e5,#ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .skor-besar { font-size: clamp(3.2rem, 8vw, 4.5rem); font-weight: 800; line-height: 1; background: linear-gradient(135deg,#4f46e5,#ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .rule-list li { margin-bottom: 4px; }
     .ujian-card { transition: border-color .15s, transform .2s, box-shadow .2s; }
     .ujian-card:hover { border-color: var(--indigo); transform: translateY(-5px) rotate(-.6deg); box-shadow: 0 18px 36px rgba(79,70,229,.2); }
@@ -167,8 +207,7 @@
     <h2 class="sub-title" id="hSubJudul" style="display:none;">bersama <span class="highlight" id="hGuru"></span></h2>
     <div class="mapel-pill" id="hMapelWrap" style="display:none;">Mata Pelajaran : <strong id="hMapel"></strong></div>
     <p class="motto" id="motto"></p>
-    <p class="materi-line" id="hMateri">
-    <p><small>&copy; 2026 Kurikulum SMAN Taruna Nala. All rights reserved.</small></p>
+    <p class="materi-line" id="hMateri"></p>
   </div>
   <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path fill="#eef2ff" d="M0,40 C240,90 480,0 720,40 C960,80 1200,10 1440,40 L1440,80 L0,80 Z"/></svg>
 </header>
@@ -201,7 +240,7 @@
   </div>
 </div>
 
-<div class="container my-5" id="kontainer" style="max-width:1000px;">
+<div class="container my-4 my-md-5" id="kontainer">
 
   <!-- DAFTAR MAPEL -->
   <div id="area-daftar" style="display:none;">
@@ -211,7 +250,7 @@
 
   <!-- IDENTITAS -->
   <div id="form-identitas" style="display:none;">
-    <div class="card p-4 mb-4">
+    <div class="card p-3 p-md-4 mb-4">
       <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
         <h5 class="fw-bold text-primary mb-0">📋 Identitas Siswa</h5>
         <a class="small fw-semibold text-decoration-none" id="linkGantiMapel" href="#" style="display:none;">← Pilih mapel lain</a>
@@ -219,11 +258,11 @@
       <p class="text-secondary small mb-3" id="judulKuis"></p>
       <div class="alert alert-info py-2 small" id="alertJadwal" style="display:none;"></div>
       <div class="row g-3">
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
           <label class="form-label fw-bold" for="inputKelas">Kelas</label>
           <select class="form-select" id="inputKelas"><option value="">-- Pilih Kelas --</option></select>
         </div>
-        <div class="col-md-8">
+        <div class="col-12 col-md-8">
           <label class="form-label fw-bold" for="inputNama">Nama Lengkap</label>
           <div class="combo">
             <input class="form-control" id="inputNama" placeholder="Pilih kelas dulu…" autocomplete="off" disabled
@@ -231,11 +270,11 @@
             <div class="combo-panel" id="listNamaPanel" role="listbox"></div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
           <label class="form-label fw-bold" for="inputAbsen">Nomor Absen</label>
           <input type="number" class="form-control" id="inputAbsen" placeholder="Contoh: 12" min="1">
         </div>
-        <div class="col-md-8">
+        <div class="col-12 col-md-8">
           <label class="form-label fw-bold" for="inputKode">Kode Akses <span class="text-muted fw-normal">(isi jika diberikan guru)</span></label>
           <input type="text" class="form-control" id="inputKode" autocomplete="off">
         </div>
@@ -245,10 +284,10 @@
         <strong>⚠️ Aturan &amp; Sistem Keamanan Ujian</strong>
         <ul class="mb-0 ps-3 mt-1 small rule-list" id="daftarAturan"></ul>
       </div>
-      <button class="btn btn-primary text-white mt-4 w-100 py-2 fw-bold fs-5 shadow-sm" id="btnMulai">Mulai Kerjakan Ujian 🚀</button>
+      <button class="btn btn-primary text-white mt-4 w-100 py-2.5 fw-bold fs-5 shadow-sm" id="btnMulai">Mulai Kerjakan Ujian 🚀</button>
     </div>
 
-    <div class="card p-4">
+    <div class="card p-3 p-md-4">
       <h5 class="fw-bold text-primary mb-3">📊 Sistem Penilaian</h5>
       <div class="table-responsive">
         <table class="table table-bordered align-middle mb-3 text-center">
@@ -267,11 +306,11 @@
   <!-- AREA KUIS -->
   <div id="area-kuis" style="display:none;">
     <div class="card sticky-top-bar sticky-top bar-ujian shadow-sm mb-3 d-flex flex-row flex-wrap justify-content-between align-items-center gap-2 px-3 py-2">
-      <div class="fw-semibold text-truncate" style="min-width:0;">
-        <span class="text-primary" id="dispMapel"></span><span class="text-muted"> · </span><span id="dispNama"></span><span class="text-muted"> · </span><span id="dispKelas"></span>
+      <div class="fw-semibold text-truncate" style="min-width:0; flex:1;">
+        <span class="text-primary" id="dispMapel"></span><span class="text-muted"> · </span><span id="dispNama"></span><span class="text-muted d-none d-sm-inline"> · </span><span id="dispKelas" class="d-none d-sm-inline"></span>
       </div>
       <div class="d-flex align-items-center gap-2">
-        <span class="small text-muted" id="saveStatus"></span>
+        <span class="small text-muted d-none d-md-inline" id="saveStatus"></span>
         <span class="badge bg-danger fw-semibold" id="pelanggaranCount">Pelanggaran: 0</span>
         <span class="badge bg-warning text-dark fw-bold" id="timer" style="font-size:.9rem;">Sisa Waktu: --:--</span>
       </div>
@@ -282,27 +321,28 @@
       <div class="prog-wrap"><div id="progBar"></div></div>
     </div>
 
-    <div class="row g-4">
-      <div class="col-md-4 col-lg-3">
+    <!-- GRID DENGAN DUKUNGAN LAYAR WIDE PC (col-lg-3 & col-lg-9) -->
+    <div class="row g-3 g-md-4">
+      <div class="col-12 col-md-4 col-lg-3">
         <div class="card p-3 sticky-top nav-card">
           <h6 class="fw-bold text-primary mb-3">Navigasi Soal</h6>
           <div class="grid-nomor" id="gridNomor"></div>
           <hr class="my-3 border-secondary-subtle">
-          <div class="d-flex flex-column gap-2 small fw-medium">
+          <div class="d-flex flex-wrap flex-md-column gap-2 small fw-medium">
             <div><span class="legend-dot ok"></span>Sudah dijawab</div>
             <div><span class="legend-dot no"></span>Belum dijawab</div>
             <div><span class="legend-dot now"></span>Sedang dibuka</div>
           </div>
-          <button class="btn btn-success w-100 fw-bold mt-4 shadow-sm" id="btnKirim">Selesai &amp; Kirim</button>
+          <button class="btn btn-success w-100 fw-bold mt-3 mt-md-4 shadow-sm" id="btnKirim">Selesai &amp; Kirim</button>
         </div>
       </div>
-      <div class="col-md-8 col-lg-9">
+      <div class="col-12 col-md-8 col-lg-9">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h6 class="fw-bold text-primary mb-0">📝 Soal Ujian</h6>
           <button type="button" class="btn btn-outline-primary btn-sm fw-bold" id="btnRefresh">🔄 Perbarui Soal</button>
         </div>
         <div id="soal-container"></div>
-        <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex justify-content-between mt-3 gap-2">
           <button class="btn btn-outline-secondary fw-bold" id="btnPrev">← Sebelumnya</button>
           <button class="btn btn-primary fw-bold" id="btnNext">Selanjutnya →</button>
         </div>
@@ -312,7 +352,7 @@
 
   <!-- HASIL -->
   <div id="area-hasil" style="display:none;">
-    <div class="card p-4 text-center mb-4">
+    <div class="card p-3 p-md-4 text-center mb-4">
       <h3 class="fw-bold text-success mb-2" id="judulHasil">🎉 Ujian Selesai!</h3>
       <p class="fw-semibold text-primary mb-1" id="resMapel"></p>
       <p class="text-secondary mb-1" id="hasilCatatan">Jawaban Anda telah tersimpan di rekapitulasi guru.</p>
@@ -323,11 +363,11 @@
         <div class="text-muted fw-semibold">dari 100</div>
       </div>
 
-      <div class="row g-3">
-        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-success mb-0" id="resBenar">0</h4><small class="text-muted fw-semibold">Soal Benar Sempurna</small></div></div>
-        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-warning mb-0" id="resTotalWaktu">00:00</h4><small class="text-muted fw-semibold">Total Waktu</small></div></div>
-        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-dark mb-0" id="resRataWaktu">0 detik</h4><small class="text-muted fw-semibold">Rata-rata / Soal</small></div></div>
-        <div class="col-md-3 col-6"><div class="p-3 border rounded bg-light"><h4 class="fw-bold text-danger mb-0" id="resPelanggaran">0</h4><small class="text-muted fw-semibold">Pelanggaran</small></div></div>
+      <div class="row g-2 g-md-3">
+        <div class="col-6 col-md-3"><div class="p-2 p-md-3 border rounded bg-light"><h4 class="fw-bold text-success mb-0" id="resBenar">0</h4><small class="text-muted fw-semibold">Soal Benar Sempurna</small></div></div>
+        <div class="col-6 col-md-3"><div class="p-2 p-md-3 border rounded bg-light"><h4 class="fw-bold text-warning mb-0" id="resTotalWaktu">00:00</h4><small class="text-muted fw-semibold">Total Waktu</small></div></div>
+        <div class="col-6 col-md-3"><div class="p-2 p-md-3 border rounded bg-light"><h4 class="fw-bold text-dark mb-0" id="resRataWaktu">0 detik</h4><small class="text-muted fw-semibold">Rata-rata / Soal</small></div></div>
+        <div class="col-6 col-md-3"><div class="p-2 p-md-3 border rounded bg-light"><h4 class="fw-bold text-danger mb-0" id="resPelanggaran">0</h4><small class="text-muted fw-semibold">Pelanggaran</small></div></div>
       </div>
 
       <div class="table-responsive mt-4" id="blokRincian">
@@ -340,22 +380,21 @@
     </div>
   </div>
  
-<footer>
-  <p><small>&copy; 2026 Kurikulum SMAN Taruna Nala. All rights reserved.</small></p>
-</footer>
+  <footer class="footer">
+    <p><small class="text-muted">&copy; 2026 Kurikulum SMAN Taruna Nala. All rights reserved.</small></p>
+  </footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ==========================================================================
-  //  KONFIGURASI — hanya URL Web App. Soal, kunci, durasi & penilaian ada di server.
-  //  Link siswa:  index.html?ujian=mtk   (langsung ke mapel)  |  index.html  (daftar mapel)
+  //  KONFIGURASI — URL Web App backend
   // ==========================================================================
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1guSW_31VFmNQr9_sooItOxtTQ296Sbp73Q8Tf1oL_GLsP16dPGM5g9Zzhn-RamhT/exec";
   const PARAM_UJIAN = (new URLSearchParams(location.search).get("ujian") || "").trim().toLowerCase();
-  const INTERVAL_CEK_SOAL = 60000;   // dasar pemeriksaan pembaruan soal (ms), ditambah jitter acak
-  const TIMEOUT_REQUEST = 25000;     // batas waktu tiap request (ms)
-  const TOLERANSI_BLUR = 3000;       // kehilangan fokus > 3 detik baru dihitung pelanggaran
+  const INTERVAL_CEK_SOAL = 60000;
+  const TIMEOUT_REQUEST = 25000;
+  const TOLERANSI_BLUR = 3000;
 
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -378,7 +417,6 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.style.display = "none"; }, 3500);
   }
 
-  // Modal dengan antrean: dua dialog tidak akan saling menimpa
   function tampilModalAsli({ judul, isi, tombol }) {
     return new Promise((resolve) => {
       if (!modalObj) modalObj = new bootstrap.Modal($("modalUmum"));
@@ -402,7 +440,7 @@
   }
   const modalOk = (judul, isi) => tampilModal({ judul, isi, tombol: [{ label: "Mengerti", kelas: "btn-primary", nilai: true }] });
 
-  // ---------- Jaringan (dengan timeout) ----------
+  // ---------- Jaringan ----------
   function fetchTimeout(url, opts) {
     const ac = new AbortController();
     const to = setTimeout(() => ac.abort(), TIMEOUT_REQUEST);
@@ -413,7 +451,7 @@
   }
   const getJson = (query) => fetchTimeout(SCRIPT_URL + "?" + query);
 
-  // ---------- Muat awal: daftar mapel atau satu mapel ----------
+  // ---------- Inisialisasi Data ----------
   async function muatAwal() {
     tampilLoading("Menghubungkan ke server…");
     try {
@@ -440,7 +478,7 @@
         const badge = u.status === "BUKA" ? "<span class='badge bg-success'>Dibuka</span>"
           : u.status === "BELUM" ? "<span class='badge bg-warning text-dark'>Dibuka " + esc(u.buka) + "</span>"
           : "<span class='badge bg-secondary'>Ditutup</span>";
-        return "<div class='col-md-6'><div class='card p-4 h-100 ujian-card'>" +
+        return "<div class='col-12 col-md-6'><div class='card p-4 h-100 ujian-card'>" +
           "<div class='d-flex justify-content-between align-items-start gap-2'><div class='fw-bold fs-5 text-primary'>" + esc(u.mapel) + "</div>" + badge + "</div>" +
           "<div class='fw-semibold mb-1'>" + esc(u.judul) + "</div>" +
           "<div class='small text-muted mb-3'>" + esc(u.guru) + " · " + u.jumlahSoal + " soal · " + Math.round(u.waktu / 60) + " menit</div>" +
@@ -469,7 +507,7 @@
       const d = await getJson("action=daftarUjian");
       S.banyakUjian = (d.ujian || []).length > 1;
       if (S.banyakUjian) { const a = $("linkGantiMapel"); a.href = location.pathname; a.style.display = ""; }
-    } catch (e) { /* opsional */ }
+    } catch (e) { }
   }
 
   function terapkanInfo(i) {
@@ -555,7 +593,7 @@
     inpNama.placeholder = "Memuat daftar siswa…";
     try {
       const res = await getJson("action=getNama&ujian=" + encodeURIComponent(S.ujian) + "&kelas=" + encodeURIComponent(k));
-      if (req !== reqKelas) return; // kelas sudah diganti, abaikan respons lama
+      if (req !== reqKelas) return;
       daftarNama = (res.nama || []).slice().sort((a, b) => a.localeCompare(b, "id"));
     } catch (e) { if (req === reqKelas) toast("Daftar nama gagal dimuat. Ketik nama secara manual."); }
     if (req !== reqKelas) return;
@@ -563,12 +601,12 @@
     inpNama.placeholder = daftarNama.length ? "Klik atau ketik nama Anda…" : "Ketik nama lengkap Anda…";
   });
 
-  // ---------- Fullscreen & mode fokus ----------
+  // ---------- Fullscreen & Mode Fokus ----------
   const adaFs = () => document.fullscreenElement || document.webkitFullscreenElement;
   function masukFullscreen() {
     const el = document.documentElement;
     const fn = el.requestFullscreen || el.webkitRequestFullscreen;
-    if (!fn) return Promise.resolve(false);           // contoh: iPhone Safari
+    if (!fn) return Promise.resolve(false);
     try { return Promise.resolve(fn.call(el, { navigationUI: "hide" })).then(() => true).catch(() => false); }
     catch (e) { return Promise.resolve(false); }
   }
@@ -591,12 +629,12 @@
   document.addEventListener("webkitfullscreenchange", onFsChange);
   $("btnKembaliFs").addEventListener("click", () => masukFullscreen());
 
-  // ---------- Memulai ujian ----------
+  // ---------- Memulai Ujian ----------
   async function mulaiKuis() {
     const nama = $("inputNama").value.trim(), kelas = $("inputKelas").value, absen = $("inputAbsen").value.trim(), kode = $("inputKode").value.trim();
     if (!nama || !kelas || !absen) { await modalOk("Data belum lengkap", "Isi kelas, nama, dan nomor absen terlebih dahulu."); return; }
 
-    const fsP = masukFullscreen();   // HARUS dipanggil langsung dari klik, sebelum await lain
+    const fsP = masukFullscreen();
     tampilLoading("Memverifikasi data dan menyiapkan soal…");
     try {
       const res = await api("mulai", { ujian: S.ujian, nama, kelas, absen, kode });
@@ -607,7 +645,7 @@
         tampilHasil(res.hasil); return;
       }
       if (res.status !== "OK") { keluarFullscreen(); await modalOk("Tidak dapat memulai", esc(res.message || "Terjadi kesalahan.")); return; }
-      S.fs = await fsP;               // true hanya jika fullscreen benar-benar aktif
+      S.fs = await fsP;
       await mulaiSesi(res);
     } catch (e) {
       sembunyiLoading(); keluarFullscreen();
@@ -638,7 +676,6 @@
     }
   }
 
-  // Pemeriksaan soal otomatis dengan jitter agar request siswa tidak serentak
   function jadwalCekSoal() {
     clearTimeout(S.cekTimer);
     S.cekTimer = setTimeout(async () => {
@@ -648,7 +685,7 @@
     }, INTERVAL_CEK_SOAL + Math.random() * 20000);
   }
 
-  // ---------- Timer (mengikuti waktu server) ----------
+  // ---------- Timer ----------
   function tick() {
     const sisa = Math.max(0, Math.round((S.deadline - Date.now()) / 1000));
     const m = Math.floor(sisa / 60), d = sisa % 60;
@@ -658,7 +695,7 @@
     if (sisa <= 0 && S.aktif && !S.mengirim) kirimJawaban(true);
   }
 
-  // ---------- Render soal ----------
+  // ---------- Render Soal ----------
   function renderSoal() {
     const cont = $("soal-container"), grid = $("gridNomor");
     cont.innerHTML = ""; grid.innerHTML = "";
@@ -684,18 +721,18 @@
           h += '<label class="option-box" for="q_' + idx + '_' + i + '"><input class="form-check-input" type="checkbox" id="q_' + idx + '_' + i + '" value="' + i + '" data-idx="' + idx + '"><span>' + o + '</span></label>';
         });
       } else if (s.tipe === "BS") {
-        h += '<table class="table table-bordered mt-2"><tbody>';
+        h += '<div class="table-responsive"><table class="table table-bordered mt-2"><tbody>';
         s.poin.forEach((p, i) => {
           h += '<tr><td class="align-middle fw-medium">' + p + '</td><td width="140" class="text-center align-middle bg-light">' +
             '<input type="radio" class="btn-check" name="bs_' + idx + '_' + i + '" id="bs_' + idx + '_' + i + '_B" value="B" data-idx="' + idx + '"><label class="btn btn-outline-success btn-sm me-1 fw-bold" for="bs_' + idx + '_' + i + '_B">B</label>' +
             '<input type="radio" class="btn-check" name="bs_' + idx + '_' + i + '" id="bs_' + idx + '_' + i + '_S" value="S" data-idx="' + idx + '"><label class="btn btn-outline-danger btn-sm fw-bold" for="bs_' + idx + '_' + i + '_S">S</label>' +
             '</td></tr>';
         });
-        h += '</tbody></table>';
+        h += '</tbody></table></div>';
       }
 
       const card = document.createElement("div");
-      card.className = "card p-4 soal-card"; card.id = "soal_card_" + idx; card.innerHTML = h;
+      card.className = "card p-3 p-md-4 soal-card"; card.id = "soal_card_" + idx; card.innerHTML = h;
       cont.appendChild(card);
     });
     typeset(0);
@@ -741,6 +778,7 @@
     if (s.tipe === "PGK") return Array.isArray(a) && a.length > 0;
     return Array.isArray(a) && a.length === s.poin.length && a.every((v) => v === "B" || v === "S");
   }
+
   function perbaruiNav(idx) {
     const b = $("nav_" + idx), ok = sudahDijawab(idx);
     b.classList.toggle("dijawab", ok); b.classList.toggle("belum", !ok);
@@ -753,9 +791,12 @@
     S.idx = target;
     $("soal_card_" + target).classList.add("active"); $("nav_" + target).classList.add("active");
     $("btnPrev").disabled = target === 0; $("btnNext").disabled = target === S.soal.length - 1;
+    if (window.innerWidth < 768) {
+      $("soal-container").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
-  // ---------- Perbarui soal (tanpa logout, jawaban & waktu tetap) ----------
+  // ---------- Perbarui Soal ----------
   const samaStruktur = (a, b) => a.tipe === b.tipe &&
     (a.opsi ? a.opsi.length : 0) === (b.opsi ? b.opsi.length : 0) &&
     (a.poin ? a.poin.length : 0) === (b.poin ? b.poin.length : 0);
@@ -804,7 +845,7 @@
       }
       if (res.selesai) return;
       if (typeof res.sisaDetik === "number") S.deadline = Date.now() + res.sisaDetik * 1000;
-      if (!res.soal) return;                       // tidak ada perubahan (pemeriksaan otomatis)
+      if (!res.soal) return;
 
       if (!S.versi) { S.versi = res.versi; if (!manual) return; }
       const berubahVersi = res.versi !== S.versi;
@@ -825,7 +866,7 @@
     }
   }
 
-  // ---------- Simpan otomatis ----------
+  // ---------- Simpan Otomatis ----------
   function tandaiPerubahan() {
     S.dirty = true; $("saveStatus").textContent = "Belum tersimpan…";
     if (!S.saveTimer) S.saveTimer = setTimeout(simpanSekarang, 5000);
@@ -868,7 +909,6 @@
     else if (S.aktif && !S.wl && "wakeLock" in navigator) aktifkanModeFokus();
   });
 
-  // Notifikasi sering memicu blur sesaat; hanya hitung bila fokus hilang > 3 detik
   let blurTimer = null;
   window.addEventListener("blur", () => {
     clearTimeout(blurTimer);
@@ -900,7 +940,6 @@
         return;
       } catch (e) { await sleep(2000 * (i + 1)); }
     }
-    // S.mengirim tetap true selama dialog terbuka agar timer tidak memicu kirim ganda
     sembunyiLoading();
     await tampilModal({ judul: "Pengiriman gagal", isi: "Jawaban belum terkirim karena koneksi bermasalah. <strong>Jangan tutup halaman ini.</strong> Pastikan internet aktif lalu kirim ulang.", tombol: [{ label: "Kirim Ulang", kelas: "btn-primary", nilai: true }] });
     S.mengirim = false;
@@ -946,7 +985,7 @@
     }
   }
 
-  // ---------- Pengaman ringan sisi klien ----------
+  // ---------- Pengaman Sisi Klien ----------
   window.addEventListener("beforeunload", (e) => { if (S.aktif) { e.preventDefault(); e.returnValue = ""; } });
   document.addEventListener("contextmenu", (e) => e.preventDefault());
   ["copy", "cut", "paste"].forEach((ev) => document.addEventListener(ev, (e) => { if (!e.target.closest("input, textarea, select")) e.preventDefault(); }));
@@ -955,10 +994,10 @@
     if (k === "f12" || (e.ctrlKey && e.shiftKey && ["i", "j", "c"].includes(k)) || (e.ctrlKey && ["u", "s", "p"].includes(k))) { e.preventDefault(); return false; }
   });
 
-  // ---------- Efek interaktif ----------
+  // ---------- Efek Interaktif & Teks Penyemangat ----------
   const kurangGerak = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Paralaks ikon di header mengikuti kursor / sentuhan
+  // Paralaks ikon di header
   (function () {
     const ikon = document.querySelectorAll(".float-ico");
     function geser(x, y) {
@@ -972,15 +1011,29 @@
   })();
 
   // Kata-kata semangat bergantian
-  const MOTTO = ["Setiap soal adalah satu langkah menuju kampus impian 🎯", "Tenang, teliti, dan percaya diri. Kamu pasti bisa! 💪", "Kerjakan yang mudah dulu, sisanya menyusul 🧠", "Jujur itu keren. Nilai terbaik lahir dari usahamu ✨", "Tarik napas dalam, lalu mulai! 🚀"];
-  (function () {
-    const el = $("motto"); let i = 0; el.textContent = MOTTO[0];
+  const MOTTO = [
+    "Setiap soal adalah satu langkah menuju kampus impian 🎯", 
+    "Tenang, teliti, dan percaya diri. Kamu pasti bisa! 💪", 
+    "Kerjakan yang mudah dulu, sisanya menyusul 🧠", 
+    "Jujur itu keren. Nilai terbaik lahir dari usahamu ✨", 
+    "Tarik napas dalam, lalu mulai! 🚀"
+  ];
+  function jalankanMotto() {
+    const el = $("motto");
+    if (!el) return;
+    let i = 0;
+    el.textContent = MOTTO[0];
+    el.style.opacity = "1";
     setInterval(() => {
       if (document.body.classList.contains("mode-ujian")) return;
-      el.style.opacity = 0;
-      setTimeout(() => { i = (i + 1) % MOTTO.length; el.textContent = MOTTO[i]; el.style.opacity = 1; }, 350);
+      el.style.opacity = "0";
+      setTimeout(() => { 
+        i = (i + 1) % MOTTO.length; 
+        el.textContent = MOTTO[i]; 
+        el.style.opacity = "1"; 
+      }, 350);
     }, 4200);
-  })();
+  }
 
   // Confetti
   function confetti(x, y, n) {
@@ -998,9 +1051,9 @@
     })();
   }
   const confettiBesar = () => { confetti(innerWidth * .25, innerHeight * .7, 90); confetti(innerWidth * .75, innerHeight * .7, 90); confetti(innerWidth * .5, innerHeight * .5, 120); };
-  ["hBadge", "hSekolah"].forEach((id) => $(id).addEventListener("click", (e) => confetti(e.clientX, e.clientY, 60)));
+  ["hBadge", "hSekolah"].forEach((id) => $(id) && $(id).addEventListener("click", (e) => confetti(e.clientX, e.clientY, 60)));
 
-  // Efek riak pada tombol
+  // Ripple Effect Button
   document.addEventListener("click", (e) => {
     const b = e.target.closest(".btn"); if (!b || kurangGerak) return;
     const r = b.getBoundingClientRect(), s = Math.max(r.width, r.height), sp = document.createElement("span");
@@ -1008,7 +1061,7 @@
     b.appendChild(sp); setTimeout(() => sp.remove(), 600);
   });
 
-  // Progres pengerjaan + pesan semangat di 25/50/75/100%
+  // Progress Bar & Milestone
   function updateProgress() {
     const n = S.soal.length; if (!n) return;
     let ok = 0; S.soal.forEach((_, i) => { if (sudahDijawab(i)) ok++; });
@@ -1023,7 +1076,7 @@
     for (const [t, m] of T) { if (p >= t) { if (t > msMax) { msMax = t; toast(m); if (t === 100) confetti(innerWidth / 2, innerHeight * .3, 60); } break; } }
   }
 
-  // Skor menghitung naik + perayaan
+  // Animasi Skor
   function animasiSkor(skor) {
     const el = $("resSkor");
     $("judulHasil").textContent = skor >= 85 ? "🏆 Luar Biasa!" : skor >= 70 ? "🎉 Kerja Bagus!" : skor >= 50 ? "💪 Terus Semangat!" : "📚 Jangan Menyerah!";
@@ -1035,13 +1088,16 @@
     if (skor >= 70) setTimeout(confettiBesar, 300);
   }
 
-  // ---------- Inisialisasi ----------
+  // ---------- Inisialisasi Event Listener ----------
   $("btnMulai").addEventListener("click", mulaiKuis);
   $("btnKirim").addEventListener("click", konfirmasiKirim);
   $("btnPrev").addEventListener("click", () => pindahSoal(S.idx - 1));
   $("btnNext").addEventListener("click", () => pindahSoal(S.idx + 1));
   $("btnRefresh").addEventListener("click", () => segarkanSoal(true));
-  window.addEventListener("load", muatAwal);
+  window.addEventListener("load", () => {
+    muatAwal();
+    jalankanMotto();
+  });
 </script>
   
 </body>
