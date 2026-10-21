@@ -109,7 +109,11 @@
     .table td, .table th { color: #0f172a !important; background-color: #fff !important; }
     .table th { background-color: #eef2ff !important; color: #3730a3 !important; }
     .badge-diff { font-size: .8rem; padding: .45em .9em; font-weight: 600; border-radius: 50px; background: linear-gradient(135deg,#f59e0b,#ec4899) !important; }
-
+    .footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #f1f1f1; /* Opsional: warna latar */
+      }
     .loading-overlay { display: flex; justify-content: center; align-items: center; position: fixed; inset: 0; background: rgba(238,242,255,.96); z-index: 9999; }
     .warning-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; display: none; }
     .toast-mini { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: linear-gradient(135deg,#312e81,#6d28d9); color: #fff; padding: 12px 22px; border-radius: 50px; z-index: 10002; display: none; font-weight: 600; font-size: .92rem; box-shadow: 0 10px 28px rgba(49,46,129,.4); animation: pop .3s ease; }
@@ -335,6 +339,10 @@
       <a class="btn btn-outline-primary fw-bold mt-4 align-self-center" id="btnMapelLain" href="#" style="display:none;">Kerjakan mapel lain</a>
     </div>
   </div>
+ 
+<footer>
+  <p><small>&copy; 2026 Kurikulum SMAN Taruna Nala. All rights reserved.</small></p>
+</footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -1035,8 +1043,6 @@
   $("btnRefresh").addEventListener("click", () => segarkanSoal(true));
   window.addEventListener("load", muatAwal);
 </script>
-  <footer>
-    <p><small>&copy; 2026 Kurikulum SMAN Taruna Nala. All rights reserved.</small></p>
-  </footer>
+  
 </body>
 </html>
